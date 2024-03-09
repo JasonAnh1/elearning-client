@@ -111,12 +111,12 @@
                                     aria-labelledby="panelsStayOpen-headingOne">
 
                                     <button v-for="lesson in item.lessons" v-bind:key="lesson.id" type="button"
-                                        class="list-group-item list-group-item-action " aria-current="true">
+                                        class="list-group-item list-group-item-action " aria-current="true" v-on:click="goToLesson(lesson.id)">
                                         <i class="fa-solid fa-video" v-if="lesson.type === 'VIDEO'">
 
                                         </i>
                                         <i class="fa-solid fa-file-lines" v-else-if="lesson.type === 'TEXT'"></i><span
-                                            class="fw-bold" style="font-size: 14px;"> Reading:</span> Introduce
+                                            class="fw-bold" style="font-size: 14px;"> Reading:</span> {{ lesson.title }}
                                     </button>
 
                                     <div class="btn btn-outline-primary w-100" v-on:click="addLesson(item.id)">Add
@@ -483,6 +483,7 @@ export default {
     data() {
         return {
             courseSection: new Object(),
+            courseId: this.$route.query.courseId,
 
         }
     },
@@ -490,16 +491,20 @@ export default {
 
     },
     computed: {
+
         currentCourse() {
             return this.$store.state.currentTagetCourse;
         },
+       
     },
     mounted() {
+        this.$store.dispatch('fetchCourse', this.courseId);
 
-        console.log(this.currentCourse.sections[0].lessons)
     },
     methods: {
-
+        goToLesson(lessonId) {
+            router.push({ path: "/LessonPage", query: { lessonId: lessonId } });
+        },
 
         addCourseSection(courseIds) {
             const courseid = courseIds

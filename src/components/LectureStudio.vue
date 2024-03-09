@@ -113,6 +113,7 @@
 </template>
 
 <script>
+import router from '@/router';
 import { VueEditor } from "vue2-editor";
 export default {
   name: 'LectureStudio',
@@ -156,9 +157,11 @@ export default {
       this.imageFile = URL.createObjectURL(this.$refs.file.files[0])
     },
     getDetailCourseStudio(courseId){
-      this.$store.dispatch('fetchCourse',courseId);
-
+   
+      router.push({ path: "/DetailCourseStudio", query: { courseId: courseId } });
+     
     },
+   
     addCourse() {
       var formData = new FormData();
       formData.append('file', this.$refs.file.files[0]);
