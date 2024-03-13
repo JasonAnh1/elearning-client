@@ -86,7 +86,7 @@
     <div class="container mt-5 mb-5">
       <h3 class="fw-bold">My course:</h3>
       <div class="row row-cols-1 row-cols-md-4 jus">
-        <div class="col" v-for="item in listCourseForAuthor" v-bind:key="item.id" >
+        <div class="col mt-4" v-for="item in listCourseForAuthor" v-bind:key="item.id" >
           <div class="card h-100 " >
 
             <a class="text-decoration-none text-reset" v-on:click="getDetailCourseStudio(item.id)">
@@ -97,11 +97,9 @@
               <div class="card-body">
                 <h5 class="card-title fw-bold">{{item.title}}</h5>
                 <p class="card-text">{{item.author.name}}</p>
+                
               </div>
-              <div class="card-footer">
-                <i class="fa-solid fa-star text-warning" v-for="n in item.rating" v-bind:key="n"></i><span class="text-muted text-decoration-none"
-                  style="font-size: 11px;">99999 Learner <i class="fa-solid fa-user"></i></span>
-              </div>
+             
             </a>
           </div>
 

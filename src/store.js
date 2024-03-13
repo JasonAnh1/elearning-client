@@ -18,25 +18,38 @@ export const store = new Vuex.Store({
         },
       ],
     },
+    
     lstCourseCategory: [],
     lstCourseForLecture: [],
     currentTagetCourse: {},
     currentTargetLesson: {},
-    currentQuizzes:[]
+    currentQuizzes:[],
+    lstCourse:[],
+    cart:[],
+    listCourseForLearner:[],
+    totalCartMoney:0
   },
   getters: {},
   mutations: {
+    updateCart(state,cartItems){
+      state.cart = cartItems
+    },
+    updateTotalCartMoney(state,total){
+      state.totalCartMoney = total
+    },
     loginServer(state, user) {
+
       state.userLogined = user;
 
       const accessToken = "Bearer " + state.userLogined.accessToken;
 
-      console.log(state.userLogined.roles[0].name);
+    
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("role", state.userLogined.roles[0].name);
       localStorage.setItem("username", state.userLogined.name);
       localStorage.setItem("userimg", state.userLogined.imageUrl);
       localStorage.setItem("ownerId", state.userLogined.id);
+     
     },
 
     register(state, userRegisted) {
@@ -51,6 +64,9 @@ export const store = new Vuex.Store({
     getListCourseForLecture(state, courses) {
       state.lstCourseForLecture = courses;
     },
+    getListCourse(state,courses){
+      state.lstCourse = courses;
+    },
     getCourse(state, course) {
       state.currentTagetCourse = course;
     },
@@ -59,9 +75,60 @@ export const store = new Vuex.Store({
     },
     getQuizzes(state,lesson){
       state.currentQuizzes = lesson
+    },
+    removeUser(state){
+      state.userLogined = null;
+      localStorage.removeItem("accessToken")
+      localStorage.removeItem("username")
+      localStorage.removeItem("userimg")
+      localStorage.removeItem("ownerId")
+    },
+    removeFromCart(state, index) {
+      state.cart.splice(index, 1);
+      let totalMoney = 0;
+      state.cart.forEach(item => {
+        totalMoney += item.priceSale; 
+    });
+      state.totalCartMoney = totalMoney
     }
   },
   actions: {
+    async submitPaymentSuccess(context,payload){
+ 
+      const response = await axios.post("api/v1/content-payment",payload, {
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
+      console.log(response.data)
+      localStorage.setItem('transactionObj', null);
+      console.log(JSON.parse(localStorage.getItem('transactionObj')))
+      // window.open(response.data.body.URL)
+
+    },
+    async goPaidPage(context,payload){
+ 
+      const response = await axios.get("api/v1/publish/pay2", {
+        params: { bankCode: payload.bankCode, amountRequest: payload.total },
+      });
+       window.location.href = response.data.body.url
+      // window.open(response.data.body.URL)
+
+    },
+    deleteItemFormCart(context,index){
+      context.commit("removeFromCart",index);
+    },
+    changeCartItems(context,cartItems){
+      let totalMoney = 0;
+      cartItems.forEach(item => {
+        totalMoney += item.priceSale; 
+    });
+      context.commit("updateCart",cartItems);
+      context.commit("updateTotalCartMoney",totalMoney);
+    },
+    logOut(context){
+      context.commit("removeUser");
+    },
     async fetchTargetLesson(context, id) {
       const response = await axios.get("api/v1/publish/get-lesson", {
         params: { lessonId: id },
@@ -73,26 +140,31 @@ export const store = new Vuex.Store({
       const response = await axios
         .post("api/v1/auth/signin", phone, password)
         .catch((error) => console.log(error));
-
+        context.commit("loginServer",response.data)
       if (response !== undefined) {
+        console.log(response.data)
+        context.commit("loginServer",response.data)
         if (response.data.roles[0].name == "ROLE_LECTURE") {
           router
             .push({ path: "/LectureStudio" })
             .catch(() => {})
-            .then(() => {
-              router.go();
-            });
-        } else {
+            ;
+
+        } else if(response.data.roles[0].name == "ROLE_LEARNER"){
+          router
+            .push({ path: "/LearnerPage" })
+            .catch(() => {})
+           ;
+        }else{
           router
             .push({ path: "/" })
             .catch(() => {})
-            .then(() => {
-              router.go();
-            });
+           ;
         }
       } else {
         Swal.fire("something went wrong. !", "Please try again.", "Faild !");
       }
+ 
     },
     async fetchAddLesson(context, payload) {
       if (payload.media != undefined) {
@@ -188,7 +260,6 @@ export const store = new Vuex.Store({
           Authorization: localStorage.getItem("accessToken"),
         },
       })
-      console.log(response.data)
       context.commit("getQuizzes",response.data);
     },
     async fetchListCourseForAuthor(context, page) {
@@ -197,7 +268,23 @@ export const store = new Vuex.Store({
         params: { page: page, authorId: authorId },
       });
 
-      context.commit("getListCourseForLecture", response.data);
+      context.commit("getListCourseForLecture", response.data.body);
+    },
+    async fetchListCourseFoUser(context, page) {
+      const userId = localStorage.getItem("ownerId");
+      const response = await axios.get("api/v1/publish/list-course-enrolled", {
+        params: { page: page, userId: userId },
+      });
+
+      context.commit("getListCourseForLecture", response.data.body);
+    },
+    async fetchListCourse(context, page) {
+    
+      const response = await axios.get("api/v1/publish/list-course", {
+        params: { page: page },
+      });
+
+      context.commit("getListCourse", response.data.body);
     },
   },
 });

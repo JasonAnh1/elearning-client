@@ -8,6 +8,8 @@ import LessonPage from "./components/LessonPage.vue"
 import CreateQuizzes from "./components/CreateQuizzes.vue"
 import QuizzPage from "./components/QuizzPage.vue"
 import CartPage from "./components/CartPage.vue"
+import LearnerPage from "./components/LearnerPage.vue"
+import AfterPayment from "./components/AfterPayment.vue"
 Vue.use(Router)
 
 export default new Router({ 
@@ -19,6 +21,8 @@ export default new Router({
         { path: '/LessonPage', component: LessonPage },
         { path: '/CreateQuizzes', component: CreateQuizzes },
         { path: '/QuizzPage', component: QuizzPage },
-        { path: '/CartPage', component:CartPage}
+        { path: '/CartPage', component:CartPage},
+        { path: '/LearnerPage', component:LearnerPage},
+        { path: '/AfterPayment', component:AfterPayment}
     ]
 })
