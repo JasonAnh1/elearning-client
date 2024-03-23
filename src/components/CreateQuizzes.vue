@@ -63,10 +63,10 @@ export default {
                 qQuestion: '',
                 qAnswer: '',
                 qType: 'FILLINTHEBLANK',
-                qA: '',
-                qB: '',
-                qC: '',
-                qD: '',
+                qA: {},
+                qB: {},
+                qC: {},
+                qD: {},
 
             }]
         }

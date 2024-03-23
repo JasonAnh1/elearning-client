@@ -168,8 +168,9 @@
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                <li v-for="item in listCourseCategories" v-bind:key="item.id"><a class="dropdown-item" href="#">{{ item.title }}</a></li>
-           
+                <li v-for="item in listCourseCategories" v-bind:key="item.id"><a class="dropdown-item" href="#">{{
+          item.title }}</a></li>
+
               </ul>
             </li>
             <li class="nav-item">
@@ -192,9 +193,7 @@
                   <div class="card border-0 shadow-sm">
                     <div class="row g-0">
                       <div class=" col-lg-4">
-                        <img
-                          :src=item.media.thumbUrl
-                          class="card-img-top
+                        <img :src=item.media.thumbUrl class="card-img-top
                           h-100" alt="...">
                       </div>
                       <div class="col-md-8">
@@ -211,7 +210,7 @@
                     </div>
                   </div>
                 </a>
-       
+
                 <p class="w-100 fw-bold mt-3 ms-2 ">Total: <span class="text-muted">đ {{ total }}</span> <i
                     class="fa-solid fa-money-bill" style="color: #35a04e;"></i></p>
                 <a class="btn btn-primary w-100 h-100 pb-0 fw-bold pb-1" v-on:click="goToCart()">Checkout</a>
@@ -222,7 +221,8 @@
               <a class="nav-link" href="#" style="font-size: 14px;">Elearning Business</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#signupModal" style="font-size: 14px;">Teach on
+              <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#signupModal"
+                style="font-size: 14px;">Teach on
                 ElearnCenter</a>
               <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel"
                 aria-hidden="true">
@@ -237,20 +237,24 @@
                         resources.</p>
                       <form>
                         <div class="mb-3">
-                          <input type="text" class="form-control" placeholder="Full name">
+                          <input type="text" class="form-control" placeholder="Full name" ref="lName">
                         </div>
                         <div class="mb-3">
-                          <input type="email" class="form-control" placeholder="Email">
+                          <input type="email" class="form-control" placeholder="Email" ref="lEmail">
                         </div>
                         <div class="mb-3">
-                          <input type="password" class="form-control" placeholder="Password">
+                          <input type="number" class="form-control" placeholder="Email" ref="lPhone">
                         </div>
+                        <div class="mb-3">
+                          <input type="password" class="form-control" placeholder="Password" ref="lPassword">
+                        </div>
+
                         <div class="form-check mb-3">
                           <input type="checkbox" class="form-check-input" id="newsletterCheckbox">
                           <label class="form-check-label" for="newsletterCheckbox">I want to receive emails with insider
                             tips, motivation, special updates, and promotions reserved for instructors.</label>
                         </div>
-                        <button type="submit" class="btn btn-primary">Sign up</button>
+                        <button  class="btn btn-primary" @click="lectureSignUp()" data-bs-dismiss="modal">Sign up</button>
                       </form>
                     </div>
                     <div class="modal-footer">
@@ -263,14 +267,15 @@
                 </div>
               </div>
             </li>
-            <li class="nav-item" v-if="userLogined  === null">
-              <a class="nav-link text-primary" href="#" data-bs-toggle="modal" data-bs-target="#loginModel"  style="font-size: 14px;">Log in</a>
+            <li class="nav-item" v-if="userName === null">
+              <a class="nav-link text-primary" href="#" data-bs-toggle="modal" data-bs-target="#loginModel"
+                style="font-size: 14px;">Log in</a>
               <div class="modal fade" id="loginModel" tabindex="-1" aria-labelledby="signupModalLabel"
-                aria-hidden="false" >
+                aria-hidden="false">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header bg-purple text-white">
-                      <h5 class="modal-title text-dark" id="loginModel" >Login into ElearnCenter</h5>
+                      <h5 class="modal-title text-dark" id="loginModel">Login into ElearnCenter</h5>
                     </div>
                     <div class="modal-body">
                       <p>Discover all content of online education. Get instant access to all free content now.</p>
@@ -295,19 +300,19 @@
                 </div>
               </div>
             </li>
-            <li class="nav-item" v-if="userLogined  === null"  style="font-size: 14px;">
+            <li class="nav-item" v-if="userName === null" style="font-size: 14px;">
               <a class="nav-link btn btn-primary text-white" href="#">Sign up</a>
             </li>
-            <li class="nav-item" v-if="userLogined  !== null"  style="font-size: 14px;">
-              <a class="nav-link text-dark" v-on:click="logOutOfSystem()"  style="font-size: 14px;">Log out</a>
-              </li>
-              <li class="nav-item mt-2" v-if="userLogined  !== null"  style="font-size: 14px;">
-             Hello!
-              </li>
-              <li class="nav-item fw-bold text-primary mt-2" v-if="userLogined  !== null"  style="font-size: 14px;">
-          {{ userLogined.name }}
-              </li>
-           
+            <li class="nav-item" v-if="userName !== null" style="font-size: 14px;">
+              <a class="nav-link text-dark btn" v-on:click="logOutOfSystem()" style="font-size: 14px;">Log out</a>
+            </li>
+            <li class="nav-item mt-2 me-1" v-if="userName !== null" style="font-size: 14px;">
+              Hello!
+            </li>
+            <li class="nav-item fw-bold text-primary mt-2" v-if="userName !== null" style="font-size: 14px;">
+              {{ userName }}
+            </li>
+
           </ul>
 
         </div>
@@ -444,43 +449,58 @@ export default {
     return {
       phone: '',
       password: '',
-      show:true
+      show: true,
+      userName: localStorage.getItem('username')
     }
   },
 
-  computed:{
-    listCourseCategories(){
+  computed: {
+    listCourseCategories() {
       return this.$store.state.lstCourseCategory;
     },
-    userLogined(){
+    userLogined() {
       return this.$store.state.userLogined;
     },
-    cartItems(){
+    cartItems() {
       return this.$store.state.cart;
     },
-    total(){
+    total() {
       return this.$store.state.totalCartMoney;
     },
   },
+  mounted() {
+
+
+  },
   methods: {
-    
-    goToCart(){
+    goLecturePage() {
+      this.$router.push({ path: "/LectureStudio" })
+    },
+    goToCart() {
       this.$router.push({ path: "/CartPage" })
     },
-    goHome(){
-      this.$router.push({ path: "/"})
+    goHome() {
+      this.$router.push({ path: "/" })
     },
     loginIntoSystem() {
       this.$store.dispatch('fetchLogin', {
         phone: this.phone,
         password: this.password
-      });
-      
-      this.show = false;
+      }).then(() => {
+        this.userName = localStorage.getItem('username')
+      })
     },
-    logOutOfSystem(){
+    lectureSignUp(){
+      let user = new Object();
+      user.email = this.$refs.lEmail.value;
+      user.name = this.$refs.lName.value;
+      user.password = this.$refs.lPassword.value;
+      user.phone = this.$refs.lPhone.value;
+      this.$store.dispatch('lectureSignUp',user)
+    },
+    logOutOfSystem() {
       this.$store.dispatch('logOut')
-
+      this.userName = null;
     }
   }
 }

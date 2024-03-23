@@ -31,6 +31,9 @@
 <button type="button" class="btn w-25 btn-outline-dark fw-bold" v-on:click="addTest()">
   Add a Test
 </button>
+<button type="button" class="btn w-25 btn-outline-dark fw-bold" v-on:click="updateTest()">
+  Update test
+</button>
 <h3 class="fw-bold mt-4">Questions</h3>
     <div class="container-fluid mt-3">
   
@@ -278,9 +281,14 @@ export default {
         router.push({ path: "/CreateQuizzes", query: { lessonId: this.lessonId } });
 
       },
+      updateTest(){
+        router.push({ path: "/UpdateQuizzes", query: { lessonId: this.lessonId } });
+
+      },
       goToTest(){
         router.push({ path: "/QuizzPage", query: { lessonId: this.lessonId } });
-      }
+      },
+
 
 
     },

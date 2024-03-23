@@ -13,8 +13,8 @@
               </h5>
               <a class="btn btn-primary btn-lg m-2 text-white" href="https://www.youtube.com/watch?v=c9B4TPnak1A"
                 role="button" rel="nofollow" target="_blank">Learner</a>
-              <a class="btn btn-outline-primary btn-lg m-2" href="https://mdbootstrap.com/docs/standard/"
-                target="_blank" role="button">Lecturers</a>
+              <a class="btn btn-outline-primary btn-lg m-2" 
+                target="_blank" role="button" v-on:click="goLecturePage()">Lecturers</a>
             </div>
           </div>
         </div>
@@ -278,8 +278,7 @@
           <div class="row mt-5">
             <h4 class="fw-bold">Popular for Data Engineers</h4>
             <!-- khoa hoc cho tat ca -->
-            <div class="card-group gap-3">
-              <carousel :per-page="perPage" :autoplay="true" :loop="true" :autoplayTimeout="2000">
+            <carousel :per-page="perPage" :autoplay="true" :loop="true" :autoplayTimeout="2000">
                 <slide v-for="item in courses" v-bind:key="item.id">
                   <div class="card ms-2" style="border: none;">
                     <img :src=item.media.thumbUrl class="card-img-top" alt="..." style="height: 150px;">
@@ -308,14 +307,6 @@
                 </slide>
 
               </carousel>
-
-
-
-
-
-
-
-            </div>
             <!-- ket thuc -->
           </div>
           <div class="row mt-5">
@@ -566,7 +557,15 @@ export default {
   data() {
     return {
       perPage: 4,
-    
+      payload: {
+                page: 0,
+                status: null,
+                authorName: null,
+                startPrice: 0,
+                endPrice: 0,
+                categoryId: 0,
+                authorId: 0
+            }
     }
   },
   computed: {
@@ -586,11 +585,24 @@ export default {
     msg: String
   },
   mounted() {
-    this.$store.dispatch('fetchListCourse', 0);
+    this.$store.dispatch('fetchListCourse', this.payload);
     this.checkScreenSize();
     window.addEventListener('resize', this.checkScreenSize);
   },
   methods: {
+    goLecturePage(){
+      if(localStorage.getItem("role") === 'ROLE_LECTURE'){
+        this.$router.push({ path: "/LectureStudio" })
+      }else{
+        this.$swal.fire({
+                    icon: 'error',
+                    title: 'Oh no',
+                    text: 'You are not lecrure!',
+                    footer: '<a href="">Go back?</a>'
+                });
+      }
+     
+    },
     checkScreenSize() {
       if (window.innerWidth < 1200) {
         this.perPage = 2;

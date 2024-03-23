@@ -1,9 +1,71 @@
 <template>
   <div>
-    <div class="my-learning container-fluid bg-dark " style="height: 200px;">
-      <h1 class="t ms-5 pt-5 fw-bold ps-5 text-primary">ElearnCenter Studio</h1>
+    
+    <div class="my-learning container-fluid bg-dark " style="height: 350px;">
+      <el-steps :space="200" :active="2" finish-status="success" class="pt-3 ms-5" 
+      v-if="isVerify !== 'VERIFY' && isVerify !== 'DISABLE'" >
+                <el-step title="Done"></el-step>
+                <el-step title="Register"></el-step>
+                <el-step title="Verify">ss</el-step>
+            </el-steps>
+      <h1 class="t ms-5 pt-5 fw-bold ps-5 text-white">{{ userName }}
+
+        <el-tooltip class="item" effect="dark" content="This account has been verified " placement="right-start"
+          v-if="isVerify === 'VERIFY'">
+          <i class="fa-solid fa-circle-check text-primary"></i>
+        </el-tooltip>
+
+
+
+      </h1>
+      <h2 class="t ms-5 pt-3 fw-bold ps-5 text-primary">ElearnCenter Studio</h2>
+
+      <h1 class="btn btn-outline-success  mt-3" style="margin-left:90px ;"
+        v-if="isVerify !== 'VERIFY' && isVerify !== 'DISABLE'" data-bs-toggle="modal"
+        data-bs-target="#verifyCheckOutModal">Verify account</h1>
       <h1 class="btn btn-outline-primary  mt-3" style="margin-left:90px ;" data-bs-toggle="modal"
-        data-bs-target="#createCourseModal">Create new course</h1>
+        data-bs-target="#createCourseModal" v-else>Create new course</h1>
+      <div class="modal fade" id="verifyCheckOutModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title text-primary" id="exampleModalLabel">Verify checkout</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="modal-verify-content">
+                <p><em>In order to proceed with the verification process and fully activate your account, it is
+                    necessary to make a payment for a verification fee.</em></p>
+                <p><em>This fee is essential to ensure the security and authenticity of your account, as it allows us to
+                    verify your identity and validate the information provided during the registration process.</em></p>
+                <p><em>Once the payment is successfully processed, our verification team will promptly review your
+                    account and confirm its authenticity, enabling you to access all the features and benefits
+                    associated with your account.</em></p>
+                <p><em>Thank you for your cooperation in this matter, and we look forward to welcoming you as a verified
+                    member of our platform.</em></p>
+
+              </div>
+              <div class="fw-bold">Chose bank:</div>
+              <select id="bankSelect" v-model="bankCode" class="form-select  mb-2 form-control"
+                aria-label="Default select example">
+                <option value="NCB" class="text-primary" selected>NATIONAL CITIZEN BANK (NCB)</option>
+                <option value="VISA" class="text-secondary">VISA CREDIT CARD</option>
+                <option value="MasterCard" class="text-success">MASTERCARD</option>
+                <option value="JCB" class="text-success">Japan Credit Bureau</option>
+                <!-- Thêm các option khác tùy theo nhu cầu -->
+              </select>
+              <div class="fw-bold">Fee will be:</div>
+              <p>đ 200.000</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                @click="checkOutVerify()">Checkout</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModal"
         aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -86,20 +148,18 @@
     <div class="container mt-5 mb-5">
       <h3 class="fw-bold">My course:</h3>
       <div class="row row-cols-1 row-cols-md-4 jus">
-        <div class="col mt-4" v-for="item in listCourseForAuthor" v-bind:key="item.id" >
-          <div class="card h-100 " >
+        <div class="col mt-4" v-for="item in listCourseForAuthor" v-bind:key="item.id">
+          <div class="card h-100 ">
 
             <a class="text-decoration-none text-reset" v-on:click="getDetailCourseStudio(item.id)">
-              <img
-                :src=item.media.thumbUrl
-                class="card-img-top " alt="...">
+              <img :src=item.media.thumbUrl class="card-img-top " alt="...">
 
               <div class="card-body">
-                <h5 class="card-title fw-bold">{{item.title}}</h5>
-                <p class="card-text">{{item.author.name}}</p>
-                
+                <h5 class="card-title fw-bold">{{ item.title }}</h5>
+                <p class="card-text">{{ item.author.name }}</p>
+
               </div>
-             
+
             </a>
           </div>
 
@@ -124,7 +184,10 @@ export default {
       cContent: null,
       cDetail: null,
       cCategoryId: 0,
-      cRequirement: null
+      cRequirement: null,
+      userName: localStorage.getItem('username'),
+      isVerify: localStorage.getItem('active'),
+      bankCode: 'NCB'
     }
   },
   components: {
@@ -134,17 +197,43 @@ export default {
     listCourseCategories() {
       return this.$store.state.lstCourseCategory;
     },
-    listCourseForAuthor()
-    {
+    userLogined() {
+      return this.$store.state.userLogined;
+    },
+    listCourseForAuthor() {
       return this.$store.state.lstCourseForLecture;
     }
   },
   mounted() {
-  
-      this.$store.dispatch('fetchListCourseForAuthor',0);
-    },
-  methods: {
 
+    this.$store.dispatch('fetchListCourseForAuthor', 0);
+  },
+  methods: {
+    checkOutVerify() {
+      if (this.bankCode) {
+        let payload = {
+          bankCode: this.bankCode,
+          total: 200000
+        }
+        let transactionObj = new Object();
+        transactionObj.type = 'verify'
+        transactionObj.amount = 200000;
+
+        localStorage.setItem('transactionObj', JSON.stringify(transactionObj));
+        this.$store.dispatch('goPaidPage', payload);
+      } else {
+        this.$swal.fire({
+          icon: 'error',
+          title: 'Oh no',
+          text: 'Some thing wrong!',
+          footer: '<a href="">Go to cart?</a>'
+        });
+      }
+
+
+
+
+    },
     loginIntoSystem() {
       this.$store.dispatch('fetchLogin', {
         phone: this.phone,
@@ -154,12 +243,12 @@ export default {
     changePic() {
       this.imageFile = URL.createObjectURL(this.$refs.file.files[0])
     },
-    getDetailCourseStudio(courseId){
-   
+    getDetailCourseStudio(courseId) {
+
       router.push({ path: "/DetailCourseStudio", query: { courseId: courseId } });
-     
+
     },
-   
+
     addCourse() {
       var formData = new FormData();
       formData.append('file', this.$refs.file.files[0]);
@@ -184,3 +273,20 @@ export default {
 
 }
 </script>
+<style scoped>
+.modal-verify-content {
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.modal-verify-content p {
+  margin-bottom: 10px;
+}
+
+.modal-verify-content em {
+  font-style: italic;
+  color: #333;
+}
+</style>

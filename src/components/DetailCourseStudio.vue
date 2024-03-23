@@ -3,7 +3,7 @@
         <div class="my-learning container-fluid bg-dark " style="height: 200px;">
             <h1 class="t ms-5 pt-5 fw-bold ps-5 text-primary">ElearnCenter Studio</h1>
             <h1 class="btn btn-outline-primary  mt-3" style="margin-left:90px ;" data-bs-toggle="modal"
-                data-bs-target="#createCourseModal">Create new course</h1>
+                data-bs-target="#createCourseModal" v-on:click="updateModel()">Edit course</h1>
             <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModal"
                 aria-hidden="true">
                 <div class="modal-dialog modal-xl">
@@ -15,55 +15,86 @@
                         <div class="modal-body">
                             <form class="row g-3">
                                 <div class="mb-3">
+                                    <label for="exampleFormControlInput1" class="form-label">Id:</label>
+                                    <input type="number" class="form-control" id="exampleFormControlInput1" ref="cTitle"
+                                        :value=currentCourse.id readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput1" class="form-label">Category</label>
+                                    <select v-model="cCategoryId" class="form-select"
+                                        aria-label="Default select example">
+                                        <option :value="item.id" v-for="item in listCourseCategories"
+                                            v-bind:key="item.id">{{ item.title }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput1">
+                                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                                        v-model="cTitle">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Short description</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput1">
+                                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                                        v-model="cShortDes">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlTextarea1" class="form-label">Description</label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <VueEditor class="form-control" id="exampleFormControlTextarea1" rows="3"
+                                        v-model="cDescription">
+                                    </VueEditor>
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlTextarea1" class="form-label">Content</label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <VueEditor class="form-control" id="exampleFormControlTextarea1" rows="3"
+                                        v-model="cContent">
+                                    </VueEditor>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="exampleFormControlTextarea1" class="form-label">Content</label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <label for="exampleFormControlTextarea1" class="form-label">Requirement</label>
+                                    <VueEditor class="form-control" id="exampleFormControlTextarea1" rows="3"
+                                        v-model="cRequirement">
+                                    </VueEditor>
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlTextarea1" class="form-label">Detail</label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <VueEditor class="form-control" id="exampleFormControlTextarea1" rows="3"
+                                        v-model="cDetail">
+                                    </VueEditor>
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">Price</label>
-                                    <input type="number" class="form-control" id="exampleFormControlInput1">
+                                    <input type="number" class="form-control" id="exampleFormControlInput1"
+                                        v-model="cPrice">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleFormControlInput1" class="form-label">PriceSale</label>
-                                    <input type="number" class="form-control" id="exampleFormControlInput1">
+                                    <input type="number" class="form-control" id="exampleFormControlInput1"
+                                        v-model="cPriceSale">
                                 </div>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected>Level</option>
-                                    <option value="1">BEGINNER</option>
-                                    <option value="2">ADVANCED</option>
-                                    <option value="3">INTERMEDIATE</option>
-                                    <option value="4">EXPERT</option>
-                                </select>
+
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput1" class="form-label">Level</label>
+                                    <select v-model="cLevel" class="form-select" aria-label="Default select example">
+                                        <option value="BEGINNER">BEGINNER</option>
+                                        <option value="ADVANCED">ADVANCED</option>
+                                        <option value="INTERMEDIATE">INTERMEDIATE</option>
+                                        <option value="EXPERT">EXPERT</option>
+                                    </select>
+                                </div>
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control " id="inputGroupFile02">
-                                    <label class="input-group-text" for="inputGroupFile02">Upload</label>
-                                    <img src="https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png"
-                                        class="img-thumbnail" alt="..." style="width: 120px;height: 67px;">
+                                    <input v-on:change="changePic()" type="file" class="form-control w-100"
+                                        id="inputGroupFile02" accept="image/*" ref="file">
+
+                                    <img :src=imageFile class="img-thumbnail mt-3" alt="..."
+                                        style="width: 120px;height: 67px;">
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-primary" v-on:click="editCourse()"
+                                data-bs-dismiss="modal">Save changes</button>
                         </div>
                     </div>
                 </div>
@@ -97,21 +128,80 @@
                 <div class="col-8 position-relative">
                     <div class=" text-white ">
                         <div class="accordion" id="accordionPanelsStayOpenExample">
-                            <div class="accordion-item" v-for="item in currentCourse.sections" v-bind:key="item.id">
+                            <div class="accordion-item" v-for="(item, index) in currentCourse.sections"
+                                v-bind:key="index">
+
                                 <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                                     <button class="accordion-button fw-bold " type="button" data-bs-toggle="collapse"
-                                        :data-bs-target="'#' + item.title" aria-expanded="true"
+                                        :data-bs-target="'#target' + index" aria-expanded="true"
                                         aria-controls="panelsStayOpen-collapseOne">
                                         Section:{{ item.partNumber }} {{ item.title }}<br />
                                         1/1
+
                                     </button>
 
                                 </h2>
-                                <div :id=item.title class="accordion-collapse collapse show text-dark"
+                                <div class="btn btn-primary w-100 pt-1" data-bs-toggle="modal"
+                                    :data-bs-target="'#editSectionModal' + index">Edit Section</div>
+                                <div class="modal fade" :id="'editSectionModal' + index" tabindex="-1"
+                                    aria-labelledby="editSectionModal" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" :id="'editSectionModal' + index">Edit section
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form class="row g-3">
+                                                    <div class="mb-3">
+                                                        <label for="exampleFormControlInput1"
+                                                            class="form-label text-dark" ref="csTitle">Id:</label>
+                                                        <input type="number" class="form-control"
+                                                            id="exampleFormControlInput1" :ref="'uId' + item.id"
+                                                            :value="item.partNumber" readonly>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="exampleFormControlInput1"
+                                                            class="form-label text-dark" ref="csTitle">Title</label>
+                                                        <input type="text" class="form-control"
+                                                            id="exampleFormControlInput1" :ref="'uTitle' + item.id"
+                                                            :value="item.title">
+                                                    </div>
+
+
+                                                    <div class="mb-3">
+                                                        <label for="exampleFormControlInput1"
+                                                            class="form-label text-dark">Section
+                                                            part:</label>
+                                                        <input type="number" class="form-control"
+                                                            id="exampleFormControlInput1" :ref="'uPartNumber' + item.id"
+                                                            :value="item.partNumber">
+                                                    </div>
+
+
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button class="btn btn-primary"
+                                                    v-on:click="updateCourseSection(item.id)"
+                                                    data-bs-dismiss="modal">Save
+                                                    changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div :id="'target' + index" class="accordion-collapse collapse show text-dark"
                                     aria-labelledby="panelsStayOpen-headingOne">
 
                                     <button v-for="lesson in item.lessons" v-bind:key="lesson.id" type="button"
-                                        class="list-group-item list-group-item-action " aria-current="true" v-on:click="goToLesson(lesson.id)">
+                                        class="list-group-item list-group-item-action " aria-current="true"
+                                        v-on:click="goToLesson(lesson.id)">
                                         <i class="fa-solid fa-video" v-if="lesson.type === 'VIDEO'">
 
                                         </i>
@@ -135,7 +225,7 @@
                         <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">create section</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -477,6 +567,7 @@
 </template>
 
 <script>
+import { VueEditor } from "vue2-editor";
 import router from '@/router';
 export default {
     name: 'DetailCourseStudio',
@@ -484,28 +575,71 @@ export default {
         return {
             courseSection: new Object(),
             courseId: this.$route.query.courseId,
-
+            imageFile: null,
+            cLevel: null,
+            cDescription: null,
+            course: new Object(),
+            cContent: null,
+            cDetail: null,
+            cCategoryId: 0,
+            cRequirement: null,
+            cPrice: 0,
+            cPriceSale: 0,
+            cTitle: null,
+            cShortDes: null,
+            uSectionTitle: null,
+            uSectionPartNumber: 0
         }
     },
     components: {
-
+        VueEditor
     },
     computed: {
-
+        listCourseCategories() {
+            return this.$store.state.lstCourseCategory;
+        },
         currentCourse() {
             return this.$store.state.currentTagetCourse;
         },
-       
-    },
-    mounted() {
-        this.$store.dispatch('fetchCourse', this.courseId);
 
     },
+    mounted() {
+
+        this.$store.dispatch('fetchCourse', this.courseId)
+
+    },
+
     methods: {
         goToLesson(lessonId) {
             router.push({ path: "/LessonPage", query: { lessonId: lessonId } });
         },
+        changePic() {
+            this.imageFile = URL.createObjectURL(this.$refs.file.files[0])
+        },
+        updateModel() {
+            this.cTitle = this.currentCourse.title,
+                this.cLevel = this.currentCourse.level,
+                this.cDescription = this.currentCourse.description,
+                this.cContent = this.currentCourse.courseContent,
+                this.cDetail = this.currentCourse.detail,
+                this.cCategoryId = this.currentCourse.categoryId,
+                this.cRequirement = this.currentCourse.requirement,
+                this.cPrice = this.currentCourse.price,
+                this.cPriceSale = this.currentCourse.priceSale,
+                this.cShortDes = this.currentCourse.shortDes
+        },
 
+        updateCourseSection(sectionId) {
+
+            const updateSection = new Object({
+                id: sectionId,
+                title: this.$refs['uTitle' + sectionId][0].value,
+                partNumber: this.$refs['uPartNumber' + sectionId][0].value,
+
+            })
+
+            this.$store.dispatch('fetchUpdateCourseSection', { 'courseId': this.courseId, 'request': updateSection });
+        },
         addCourseSection(courseIds) {
             const courseid = courseIds
             this.courseSection = new Object({
@@ -514,6 +648,35 @@ export default {
                 courseId: courseid
             })
             this.$store.dispatch('fetchAddCourseSection', { 'request': this.courseSection });
+        },
+        editCourse() {
+            if (this.$refs.file.files[0]) {
+                var formData = new FormData();
+                formData.append('file', this.$refs.file.files[0]);
+            }
+
+            this.course = new Object({
+                id: this.courseId,
+                title: this.cTitle,
+                categoryId: this.cCategoryId,
+                shortDes: this.cShortDes,
+                requirement: this.cRequirement,
+                detail: this.cDetail,
+                price: this.cPrice,
+                priceSale: this.cPriceSale,
+                courseContent: this.cContent,
+                level: this.cLevel,
+                description: this.cDescription
+            })
+            this.$store.dispatch('fetchUpdateCourse', { 'img': formData, 'request': this.course })
+                .then(() => {
+                    router
+                        .push({ path: "/LectureStudio" })
+                        .catch(() => { })
+                        .then(() => {
+                            router.go();
+                        });
+                });
         },
         addLesson(courseStId) {
             router.push({ path: 'CreateLesson', query: { courseSectionId: courseStId } })

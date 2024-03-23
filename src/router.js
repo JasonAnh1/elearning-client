@@ -10,6 +10,9 @@ import QuizzPage from "./components/QuizzPage.vue"
 import CartPage from "./components/CartPage.vue"
 import LearnerPage from "./components/LearnerPage.vue"
 import AfterPayment from "./components/AfterPayment.vue"
+import CourseTable from "./components/admin/CourseTable.vue"
+import RevenueChart from "./components/admin/RevenueChart.vue"
+import UpdateQuizzes from "./components/admin/UpdateQuizzes.vue"
 Vue.use(Router)
 
 export default new Router({ 
@@ -20,9 +23,12 @@ export default new Router({
         { path: '/CreateLesson', component: CreateLesson },
         { path: '/LessonPage', component: LessonPage },
         { path: '/CreateQuizzes', component: CreateQuizzes },
-        { path: '/QuizzPage', component: QuizzPage },
+        { path: '/QuizzPage', component: QuizzPage }, 
         { path: '/CartPage', component:CartPage},
         { path: '/LearnerPage', component:LearnerPage},
-        { path: '/AfterPayment', component:AfterPayment}
+        { path: '/AfterPayment', component:AfterPayment},
+        { path: '/CourseTable', component:CourseTable},
+        { path: '/RevenueChart', component:RevenueChart},
+        { path: '/UpdateQuizzes', component:UpdateQuizzes}
     ]
 })

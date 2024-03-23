@@ -167,6 +167,7 @@ export default {
                         type: item.type
                     };
                 });
+                transactionObj.type = 'checkout'
                 transactionObj.items = newLst;
                 transactionObj.total = this.total;
           
