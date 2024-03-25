@@ -53,9 +53,9 @@
                 </div>
 
                 <!-- Nút để thêm câu hỏi mới -->
-                <button v-on:click="addQuestion()" class="btn btn-primary">Thêm câu hỏi mới</button>
+                <button v-on:click="addQuestion()" class="btn btn-primary">Add new</button>
                 <!-- Nút để lưu câu hỏi -->
-                <button v-on:click="updateQuestions()" class="btn btn-success">Lưu câu hỏi</button>
+                <button v-on:click="updateQuestions()" class="btn btn-success">Save</button>
             </div>
         </form>
 
@@ -137,24 +137,50 @@ export default {
         },
         updateQuestions() {
 
-            console.log(this.questions)
+
             let payload = new Object();
             payload.questions = this.questions
-            
-            console.log(payload)
-            axios.post("api/v1/update-quizzes", payload, {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken"),
-                },
-            }).then(
-                setTimeout(location.reload.bind(location), 90),
-                 this.$router
-                 .push({ path: "/QuizzPage", query: { lessonId: this.lessonId } })
-            );
 
-         
-         
-            // console.log('Các câu hỏi được lưu:', payload);
+
+            let flag = false;
+            this.questions
+                .filter(question => question.qType === 'MULTIPLECHOICE')
+                .every(question => {
+                    console.log(question)
+                    // Kiểm tra nếu loại câu hỏi là MULTIPLECHOICE và có ít nhất một đáp án trùng với câu trả lời
+
+                    flag = [question.qA, question.qB, question.qC, question.qD].some(choice => {
+                        return choice.content.trim() === question.qAnswer.trim();
+
+                    });
+                    console.log(flag)
+                    if (flag) {
+                        return true;
+                    }
+
+                    // Nếu không phải MULTIPLECHOICE, bỏ qua kiểm tra và trả về true
+                });
+            if (!flag) {
+                // Hiển thị thông báo hoặc thực hiện hành động tương ứng
+                alert("Make sure there is one choice matching with answer!");
+                return; // Ngăn chặn việc lưu câu hỏi
+            } else {
+                axios.post("api/v1/update-quizzes", payload, {
+                    headers: {
+                        Authorization: localStorage.getItem("accessToken"),
+                    },
+                }).then(
+                    setTimeout(location.reload.bind(location), 90),
+                    this.$router
+                        .push({ path: "/QuizzPage", query: { lessonId: this.lessonId } })
+                );
+            }
+
+
+
+
+
+
         },
 
     },

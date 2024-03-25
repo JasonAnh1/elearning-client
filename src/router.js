@@ -13,6 +13,7 @@ import AfterPayment from "./components/AfterPayment.vue"
 import CourseTable from "./components/admin/CourseTable.vue"
 import RevenueChart from "./components/admin/RevenueChart.vue"
 import UpdateQuizzes from "./components/admin/UpdateQuizzes.vue"
+import DetailCourse from "./components/DetailCourse.vue"
 Vue.use(Router)
 
 export default new Router({ 
@@ -29,6 +30,7 @@ export default new Router({
         { path: '/AfterPayment', component:AfterPayment},
         { path: '/CourseTable', component:CourseTable},
         { path: '/RevenueChart', component:RevenueChart},
-        { path: '/UpdateQuizzes', component:UpdateQuizzes}
+        { path: '/UpdateQuizzes', component:UpdateQuizzes},
+        { path: '/DetailCourse', component: DetailCourse}
     ]
 })

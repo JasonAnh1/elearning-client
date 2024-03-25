@@ -13,8 +13,8 @@
               </h5>
               <a class="btn btn-primary btn-lg m-2 text-white" href="https://www.youtube.com/watch?v=c9B4TPnak1A"
                 role="button" rel="nofollow" target="_blank">Learner</a>
-              <a class="btn btn-outline-primary btn-lg m-2" 
-                target="_blank" role="button" v-on:click="goLecturePage()">Lecturers</a>
+              <a class="btn btn-outline-primary btn-lg m-2" target="_blank" role="button"
+                v-on:click="goLecturePage()">Lecturers</a>
             </div>
           </div>
         </div>
@@ -279,34 +279,38 @@
             <h4 class="fw-bold">Popular for Data Engineers</h4>
             <!-- khoa hoc cho tat ca -->
             <carousel :per-page="perPage" :autoplay="true" :loop="true" :autoplayTimeout="2000">
-                <slide v-for="item in courses" v-bind:key="item.id">
-                  <div class="card ms-2" style="border: none;">
-                    <img :src=item.media.thumbUrl class="card-img-top" alt="..." style="height: 150px;">
-                    <div class="card-body">
-                      <h5 class="fw-bold" style="font-size: 16px;">
-                        {{ item.title }}
-                      </h5>
-                      <p class="text-muted" style="font-size: 12px;">Jhoe Doe</p>
-                      <p class="fw-bold">4.5 <i class="fa-solid fa-star text-warning"></i><i
-                          class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i
-                          class="fa-solid fa-star text-warning"></i><i
-                          class="fa-regular fa-star-half-stroke text-warning"></i><span class="text-muted"
-                          style="font-size: 12px;">(123123)</span></p>
-                      <p class="fw-bold">đ {{ item.priceSale }}<s class="text-muted fw-light">đ {{ item.price }}</s> <span
-                          class="badge bg-info text-dark">Highrate</span></p>
+              <slide v-for="item in courses" v-bind:key="item.id">
 
-                    </div>
-                    <div class="card-footer " style="background-color: white;border: none;">
-                      <button class="btn btn-primary w-75" style="background-color: #742feb;border: none;"
-                        v-on:click="addCourseToCart(item)">Add to
-                        cart</button>
-                      <button class="rounded-circle ms-2 px-2 py-1"><i class="fa-regular fa-heart"></i></button>
-                    </div>
+                <div class="card ms-2" style="border: none;">
+                  <img :src=item.media.thumbUrl class="card-img-top" alt="..." style="height: 150px;"
+                    @click="goToDetail(item.id)">
+                  <div class="card-body" @click="goToDetail(item.id)">
+                    <h5 class="fw-bold" style="font-size: 16px;">
+                      {{ item.title }}
+                    </h5>
+                    <p class="text-muted" style="font-size: 12px;">Jhoe Doe</p>
+                    <p class="fw-bold">4.5 <i class="fa-solid fa-star text-warning"></i><i
+                        class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i
+                        class="fa-solid fa-star text-warning"></i><i
+                        class="fa-regular fa-star-half-stroke text-warning"></i><span class="text-muted"
+                        style="font-size: 12px;">(123123)</span></p>
+                    <p class="fw-bold">đ {{ item.priceSale }}<s class="text-muted fw-light">đ {{ item.price }}</s> <span
+                        class="badge bg-info text-dark">Highrate</span></p>
+
                   </div>
+                  <div class="card-footer " style="background-color: white;border: none;">
+                    <button class="btn btn-primary w-75" style="background-color: #742feb;border: none;"
+                      v-on:click="addCourseToCart(item)" v-if="item.isEnrolled == false">Add to
+                      cart</button>
+                    <button class="btn btn-primary w-75" style="background-color: #29e6c3;border: none;"
+                      v-else>Learn</button>
+                    <button class="rounded-circle ms-2 px-2 py-1"><i class="fa-regular fa-heart"></i></button>
+                  </div>
+                </div>
 
-                </slide>
+              </slide>
 
-              </carousel>
+            </carousel>
             <!-- ket thuc -->
           </div>
           <div class="row mt-5">
@@ -558,21 +562,21 @@ export default {
     return {
       perPage: 4,
       payload: {
-                page: 0,
-                status: null,
-                authorName: null,
-                startPrice: 0,
-                endPrice: 0,
-                categoryId: 0,
-                authorId: 0
-            }
+        page: 0,
+        status: null,
+        authorName: null,
+        startPrice: 0,
+        endPrice: 0,
+        categoryId: 0,
+        authorId: 0
+      }
     }
   },
   computed: {
     courses() {
       return this.$store.state.lstCourse;
     },
-    cartItems(){
+    cartItems() {
       return this.$store.state.cart;
     }
   },
@@ -590,18 +594,21 @@ export default {
     window.addEventListener('resize', this.checkScreenSize);
   },
   methods: {
-    goLecturePage(){
-      if(localStorage.getItem("role") === 'ROLE_LECTURE'){
+    goToDetail(id) {
+      this.$router.push({ path: "/DetailCourse", query: { courseId: id } });
+    },
+    goLecturePage() {
+      if (localStorage.getItem("role") === 'ROLE_LECTURE') {
         this.$router.push({ path: "/LectureStudio" })
-      }else{
+      } else {
         this.$swal.fire({
-                    icon: 'error',
-                    title: 'Oh no',
-                    text: 'You are not lecrure!',
-                    footer: '<a href="">Go back?</a>'
-                });
+          icon: 'error',
+          title: 'Oh no',
+          text: 'You are not lecrure!',
+          footer: '<a href="">Go back?</a>'
+        });
       }
-     
+
     },
     checkScreenSize() {
       if (window.innerWidth < 1200) {
@@ -628,7 +635,7 @@ export default {
         // Nếu mục chưa tồn tại trong giỏ hàng, thêm vào giỏ hàng và lưu lại vào localStorage
         this.cartItems.push(item);
         // localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        this.$store.dispatch('changeCartItems',this.cartItems)
+        this.$store.dispatch('changeCartItems', this.cartItems)
         // Hiển thị thông báo hoặc thực hiện các hành động khác sau khi thêm vào giỏ hàng
         this.$swal.fire({
           icon: 'success',
@@ -646,5 +653,28 @@ export default {
 <style scoped>
 .bg-image {
   background-image: url('~@/assets/banner.jpg');
+}
+
+/* Default height for small devices */
+#intro-example {
+  height: 400px;
+}
+
+/* Height for devices larger than 992px */
+@media (min-width: 992px) {
+  #intro-example {
+    height: 600px;
+  }
+}
+
+.card {
+
+  transition: .3s transform cubic-bezier(.155, 1.105, .295, 1.12), .3s box-shadow, .3s -webkit-transform cubic-bezier(.155, 1.105, .295, 1.12);
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
 }
 </style>

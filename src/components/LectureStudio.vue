@@ -187,7 +187,16 @@ export default {
       cRequirement: null,
       userName: localStorage.getItem('username'),
       isVerify: localStorage.getItem('active'),
-      bankCode: 'NCB'
+      bankCode: 'NCB',
+      payload: {
+                page: 0,
+                status: null,
+                authorName: null,
+                startPrice: 0,
+                endPrice: 0,
+                categoryId: 0,
+                authorId: 0
+            }
     }
   },
   components: {
@@ -201,12 +210,12 @@ export default {
       return this.$store.state.userLogined;
     },
     listCourseForAuthor() {
-      return this.$store.state.lstCourseForLecture;
+      return this.$store.state.lstCourse; 
     }
   },
   mounted() {
-
-    this.$store.dispatch('fetchListCourseForAuthor', 0);
+    this.payload.authorId =  localStorage.getItem("ownerId");
+    this.$store.dispatch('fetchListCourse', this.payload)
   },
   methods: {
     checkOutVerify() {

@@ -329,7 +329,9 @@ export const store = new Vuex.Store({
           authorName: payload.authorName,
           categoryId: payload.categoryId},
 
-      });
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+          },},);
 
       context.commit("getListCourse", response.data.body);
     },
