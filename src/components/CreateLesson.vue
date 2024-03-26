@@ -2,8 +2,8 @@
     <div>
         <div class="my-learning container-fluid bg-dark " style="height: 200px;">
             <h1 class="t ms-5 pt-5 fw-bold ps-5 text-primary">ElearnCenter Studio</h1>
-            <h1 class="btn btn-outline-primary  mt-3" style="margin-left:90px ;" data-bs-toggle="modal"
-                data-bs-target="#createCourseModal">Create new course</h1>
+            <!-- <h1 class="btn btn-outline-primary  mt-3" style="margin-left:90px ;" data-bs-toggle="modal"
+                data-bs-target="#createCourseModal">Create new course</h1> -->
             <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModal"
                 aria-hidden="true">
                 <div class="modal-dialog modal-xl">
@@ -73,7 +73,12 @@
             <form class="row g-3">
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" ref="lTitle">
+                    <input type="text" class="form-control" id="exampleFormControlInput1" v-model="lTitle">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Pass threshold</label>
+                    <input type="number" class="form-control" id="exampleFormControlInput1" v-model="lPassThreshold"
+                        placeholder="Number of questions to answer correctly to pass this lesson.">
                 </div>
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">Content</label>
@@ -100,14 +105,16 @@
                     </div>
                 </div>
 
-                <div class="input-group mb-3"  v-if="lType === 'VIDEO'">
+                <div class="input-group mb-3" v-if="lType === 'VIDEO'">
                     <label for="selectypelesson" class="form-label">Lesson thumb image</label>
                     <input v-on:change="changePic()" type="file" class="form-control w-100" id="inputGroupFile02"
                         accept="image/*" ref="thumbFile">
 
                     <img :src=imageFile class="img-thumbnail mt-3" alt="..." style="width: 120px;height: 67px;">
                 </div>
-                <div class="btn btn-outline-primary w-25" v-on:click="addLesson()">Create</div>
+                <div class="btn btn-outline-primary w-25" v-on:click="addLesson()"
+                    v-if="lessonId === null || lessonId === undefined">Create</div>
+                <div class="btn btn-outline-primary w-25" v-on:click="updateLesson()" v-else>Update</div>
             </form>
 
         </div>
@@ -121,12 +128,15 @@ export default {
     data() {
         return {
             courseSectionId: this.$route.query.courseSectionId,
+            lessonId: this.$route.query.lessonId,
             showVideo: false,
             videoSource: null,
             imageFile: null,
             lesson: new Object(),
             lContent: null,
-            lType: null
+            lType: null,
+            lTitle: null,
+            lPassThreshold: 0
         }
     },
     components: {
@@ -136,28 +146,97 @@ export default {
         currentCourse() {
             return this.$store.state.currentTagetCourse;
         },
+        lessonCurrent() {
+            return this.$store.state.currentTargetLesson;
+        },
     },
     mounted() {
-
+        if (this.lessonId !== null && this.lessonId !== undefined) {
+            this.$store.dispatch('fetchTargetLesson', this.lessonId);
+            this.lTitle = this.lessonCurrent.title;
+            this.lContent = this.lessonCurrent.content;
+            this.lPassThreshold = this.lessonCurrent.passThreshold;
+            this.lType = this.lessonCurrent.type;
+            this.videoSource = this.lessonCurrent.media.originUrl;
+            this.imageFile = this.lessonCurrent.media.thumbUrl;
+            if (this.videoSource !== null && this.videoSource !== undefined) {
+                this.showVideo = true
+            }
+        }
 
     },
     methods: {
 
-
-        addLesson() {
-            if(this.lType ==='VIDEO'){
+        updateLesson() {
+            if (this.lType === 'VIDEO') {
                 var formData = new FormData();
-            formData.append('thumbFile', this.$refs.thumbFile.files[0]);
-            formData.append('videoFile', this.$refs.videoFile.files[0]);
+                formData.append('thumbFile', this.$refs.thumbFile.files[0]);
+                formData.append('videoFile', this.$refs.videoFile.files[0]);
             }
- 
             this.lesson = new Object({
-                title: this.$refs.lTitle.value,
+                title: this.lTitle,
+                content: this.lContent,
+                type: this.lType,
+                id: this.lessonId
+            })
+
+            // fetchUpdateLesson
+            this.$store.dispatch('fetchUpdateLesson', { 'media': formData, 'request': this.lesson });
+            this.$router.go(-1);
+
+        },
+        addLesson() {
+            if (!this.validateForm()) {
+
+                return; // Nếu không hợp lệ, không thực hiện thêm bài học
+            }
+            if (this.lType === 'VIDEO') {
+                var formData = new FormData();
+                formData.append('thumbFile', this.$refs.thumbFile.files[0]);
+                formData.append('videoFile', this.$refs.videoFile.files[0]);
+            }
+
+            this.lesson = new Object({
+                title: this.lTitle,
                 content: this.lContent,
                 coursePartId: this.courseSectionId,
                 type: this.lType
             })
-            this.$store.dispatch('fetchAddLesson', { 'media': formData, 'request': this.lesson });
+            this.$store.dispatch('fetchAddLesson', { 'media': formData, 'request': this.lesson })
+            this.$router.go(-1);
+        },
+        validateForm() {
+            // Kiểm tra các điều kiện tùy thuộc vào loại bài học
+            if (this.lType === 'VIDEO') {
+                // Kiểm tra xem video và hình ảnh đã được chọn chưa
+                if (!this.$refs.videoFile.files.length || !this.$refs.thumbFile.files.length) {
+                    this.$notify.error({
+                    title: 'Error',
+                    message: 'Please select video and thumb image.'
+                });
+                    return false;
+                }
+            }
+
+            // Kiểm tra xem title và pass threshold đã được nhập chưa
+            if (!this.lTitle || !this.lPassThreshold) {
+                this.$notify.error({
+                    title: 'Error',
+                    message: 'Please fill in all required fields.'
+                });
+                return false;
+            }
+
+            // Kiểm tra nếu có content, nếu là TEXT thì phải có nội dung
+            if (this.lType === 'TEXT' && !this.lContent) {
+                this.$notify.error({
+                    title: 'Error',
+                    message:'Please fill in content field.'
+                });
+                return false;
+            }
+
+            return true; // Trả về true nếu tất cả điều kiện đều hợp lệ
         },
         changePic() {
             this.imageFile = URL.createObjectURL(this.$refs.thumbFile.files[0])

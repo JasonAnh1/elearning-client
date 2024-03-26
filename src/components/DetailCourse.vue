@@ -6,7 +6,7 @@
           <div class="card mb-3 shadow-sm" >
 
             <div class="card-body">
-              <h5 class="card-title fw-bold">{{ currentCourse.title }}</h5>
+              <h5 class="card-title fw-bold">{{ currentCourse.title }} </h5>
               <p class="card-text">{{ currentCourse.shortDes }}</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="mb-2">
@@ -20,19 +20,19 @@
                 </div>
               </div>
               <div class="d-flex justify-content-between align-items-center">
-                <div class="mb-2">
+                <div class="mb-2" v-if="currentCourse.isEnrolled === false">
                   <span class="text-muted">Price:</span>
                   <span class="text-decoration-line-through">{{ formatCurrency(currentCourse.price) }}</span>
                 </div>
-                <div class="mb-2">
-                  <span class="text-danger">Discount {{ ((currentCourse.price - currentCourse.priceSale) /
+                <div class="mb-2" v-if="currentCourse.isEnrolled === false">
+                  <span class="text-danger" >Discount {{ ((currentCourse.price - currentCourse.priceSale) /
                 currentCourse.price * 100).toFixed(0) }}%</span>
                 </div>
               </div>
-              <h4 class="card-title">{{ formatCurrency(currentCourse.priceSale) }}</h4>
-              <div class="d-flex justify-content-between align-items-center">
-                <button type="button" class="btn btn-primary">Thêm vào giỏ hàng</button>
-                <button type="button" class="btn btn-outline-primary">Mua ngay</button>
+              <h4 class="card-title" v-if="currentCourse.isEnrolled === false">{{ formatCurrency(currentCourse.priceSale) }}</h4>
+              <div class="d-flex justify-content-between align-items-center" v-if="currentCourse.isEnrolled === false">
+                <button type="button" class="btn btn-primary">Add to cart</button>
+                <button type="button" class="btn btn-outline-primary">Buy now</button>
               </div>
             </div>
           </div>
@@ -417,8 +417,8 @@
             <div class="hovereffect">
               <img class="card-img-top img-responsive" :src=currentCourse.media.originUrl
                 alt="">
-              <div class="overlay">
-                <h2 class="rounded bg-primary btn"> <i class="fa-solid fa-play"> Enroll </i></h2>
+              <div class="overlay" v-if="currentCourse.isEnrolled === false">
+                <h2 class="rounded bg-primary btn" > <i class="fa-solid fa-play"> Enroll </i></h2>
                 <p class="icon-links">
                   <a href="#" class="">
                     <i class="fa-solid fa-cart-shopping"></i>
@@ -441,6 +441,11 @@
               </ul>
             </div>
           </div>
+          <div class="mt-5 d-flex justify-content-center" v-if="currentCourse.isEnrolled === true">
+            <el-progress type="circle" :percentage="77.5" width="250"></el-progress>
+          </div>
+       
+  
         </div>
       </div>
     </div>
@@ -466,18 +471,22 @@ export default {
     currentCourse() {
       return this.$store.state.currentTagetCourse;
     },
+  
 
   },
   mounted() {
 
     this.$store.dispatch('fetchCourse', this.courseId)
-
+ 
   },
 
   methods: {
     formatCurrency(amount) {
       return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     },
+    goToLesson(lessonId) {
+            this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId } })
+        },
   },
   props: {
     msg: String

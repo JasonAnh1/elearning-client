@@ -197,6 +197,27 @@ export const store = new Vuex.Store({
         },
       });
     },
+    async fetchUpdateLesson(context, payload) {
+      if (payload.media != undefined) {
+        const responseMedia = await axios.post(
+          "api/v1/file/upload-video",
+          payload.media,
+          {
+            headers: {
+              Authorization: localStorage.getItem("accessToken"),
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        payload.request.mediaId = responseMedia.data.body.id;
+      }
+
+      await axios.post("api/v1/update-lesson", payload.request, {
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
+    },
     async fetchAddCourse(context, payload) {
       const responseImg = await axios.post(
         "api/v1/file/upload-image",
@@ -285,6 +306,9 @@ export const store = new Vuex.Store({
     async fetchCourse(context, courseId) {
       const response = await axios.get("api/v1/publish/get-course", {
         params: { courseId: courseId },
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
       });
       const response2 = await axios.get("api/v1/publish/list-course-section", {
         params: { courseId: courseId },
