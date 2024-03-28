@@ -86,6 +86,7 @@ export const store = new Vuex.Store({
       localStorage.removeItem("username");
       localStorage.removeItem("userimg");
       localStorage.removeItem("ownerId");
+      localStorage.removeItem("role")
       setTimeout(location.reload.bind(location), 90);
       router.push({ path: "/" }).catch(() => {});
     },

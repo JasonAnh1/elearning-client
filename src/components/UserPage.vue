@@ -216,10 +216,11 @@
                 <a class="btn btn-primary w-100 h-100 pb-0 fw-bold pb-1" v-on:click="goToCart()">Checkout</a>
               </ul>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="role === 'ROLE_LECTURE'">
 
-              <a class="nav-link" href="#" style="font-size: 14px;">Elearning Business</a>
-            </li>
+<a class="nav-link" style="font-size: 14px;" @click="goLecturePage()">LectureStudio</a>
+</li>
+            
             <li class="nav-item">
               <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#signupModal"
                 style="font-size: 14px;">Teach on
@@ -450,6 +451,7 @@ export default {
       phone: '',
       password: '',
       show: true,
+      role: localStorage.getItem('role'),
       userName: localStorage.getItem('username')
     }
   },
@@ -469,7 +471,7 @@ export default {
     },
   },
   mounted() {
-
+    console.log(this.role)
 
   },
   methods: {
@@ -488,6 +490,7 @@ export default {
         password: this.password
       }).then(() => {
         this.userName = localStorage.getItem('username')
+        this.role = localStorage.getItem('role')
       })
     },
     lectureSignUp(){
@@ -499,8 +502,10 @@ export default {
       this.$store.dispatch('lectureSignUp',user)
     },
     logOutOfSystem() {
-      this.$store.dispatch('logOut')
       this.userName = null;
+      this.role = null;
+      this.$store.dispatch('logOut')
+   
     }
   }
 }

@@ -1,10 +1,6 @@
 <template>
   <div class="container-fluid">
 
-
-
-
-
     <div class="row flex-nowrap">
       <div class="col py-6">
         <!-- <video class="w-100" controls v-if="lesson.type === 'VIDEO'"  :key="lesson.media.originUrl">
@@ -26,15 +22,26 @@
 
         <div class="description">
           <h2 class="fw-bold mt-4">{{ lesson.title }}</h2>
-          <div v-html="lesson.content"></div>
+          <div v-html="lesson.content" ref="content"></div>
           <!-- Button trigger modal -->
           <button type="button" class="btn w-25 btn-outline-dark fw-bold" data-bs-toggle="modal"
             data-bs-target="#staticBackdrop">
             Resource
           </button>
-          <a type="button" class="btn w-25 btn-outline-dark fw-bold" v-on:click="goToTest()">
-            Take a test
-          </a>
+
+          <span v-if="lesson.haveTest === true">
+            <span v-if="lesson.type === 'TEXT'">
+              <a type="button" class="btn w-25 btn-outline-dark fw-bold" v-on:click="goToTest()">
+                Take a test
+              </a>
+            </span>
+            <span v-else>
+              <a type="button" class="btn w-25 btn-outline-dark fw-bold" v-on:click="goToTest()"
+                v-if="videoCompleted === true">
+                Take a test
+              </a>
+            </span>
+          </span>
           <button type="button" class="btn w-25 btn-outline-dark fw-bold">
             Mark as Done!
           </button>
@@ -216,12 +223,12 @@
               <div :id="'target' + index" class="accordion-collapse collapse show text-dark"
                 aria-labelledby="panelsStayOpen-headingOne">
 
-                <button v-for="lesson in item.lessons"  :disabled="lesson.lock" v-bind:key="lesson.id" type="button"
+                <button v-for="lesson in item.lessons" :disabled="lesson.lock" v-bind:key="lesson.id" type="button"
                   class="list-group-item list-group-item-action fw-bold" aria-current="true"
                   v-on:click="goToLesson(lesson.id)">
-                
-                    <i class="fa-solid fa-lock"  v-if ="lesson.lock" ></i>
-                
+
+                  <i class="fa-solid fa-lock" v-if="lesson.lock"></i>
+
                   <i class="fa-solid fa-video" v-else-if="lesson.type === 'VIDEO'">
 
                   </i>
@@ -273,20 +280,50 @@ export default {
     },
   },
   async mounted() {
-    this.$store.dispatch('fetchTargetLesson', this.lessonId);
-    this.fetchWatchedPercentage(this.lessonId)
+    await this.$store.dispatch('fetchTargetLesson', this.lessonId);
+
+    if (this.lesson.type === 'VIDEO') {
+      this.fetchWatchedPercentage(this.lessonId)
+    }else if(this.lesson.type === 'TEXT' && this.lesson.haveTest === false)
+    {
+      window.addEventListener('scroll', this.handleScroll);
+    }
+
     this.fetchLearningLesson()
 
-
-
-    // Event listener for timeupdate event
-
-
-
   },
-
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.handleScroll);
+  },
   methods: {
+    handleScroll() {
+      // Lấy vị trí hiện tại của thanh cuộn
+    let scrollPosition = window.scrollY;
 
+
+      // Kiểm tra nếu thanh cuộn đã đến đoạn nhất định (ví dụ: 500px)
+      if (scrollPosition >= (document.body.clientHeight - window.innerHeight - 1080)) {
+       
+        this.triggerFunction();
+        window.removeEventListener('scroll', this.handleScroll);
+      }
+    },
+    async triggerFunction() {
+      await axios.get("api/v1/unlock-lesson", {
+        params: { request: this.lessonId },
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
+
+      this.fetchLearningLesson()
+      // Hàm được gọi khi đến vị trí cụ thể trên thanh cuộn
+      this.$notify({
+        title: 'Success',
+        message: 'You was finished the lesson',
+        type: 'success'
+      });
+    },
     async fetchLearningLesson() {
       try {
         // Gửi yêu cầu API để lấy phần trăm đã xem từ backend
@@ -297,7 +334,6 @@ export default {
           },
         });
         this.sections = response.data;
-        console.log(this.sections)
 
       } catch (error) {
         this.$notify.error({
@@ -309,7 +345,7 @@ export default {
     },
     async fetchWatchedPercentage(newLessonId) {
       try {
-      
+
         // Gửi yêu cầu API để lấy phần trăm đã xem từ backend
         const response = await axios.get("api/v1/get-video-progress", {
           params: { lessonId: newLessonId },
@@ -332,8 +368,8 @@ export default {
           video.currentTime = targetTime;
         });
       } catch (error) {
-      
-        
+
+
         this.$notify.error({
           title: 'Error',
           message: 'There was an error getting the percentage viewed'
@@ -341,16 +377,18 @@ export default {
       }
     },
     goToLesson(lessonId) {
-      
+
       this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId, courseId: this.courseId } })
       location.reload();
-      
+
     },
-    updateProgress(event) {
+    async updateProgress(event) {
       const video = event.target;
       if (video.duration > 0 && !this.videoCompleted) {
+
         const currentPercentage = ((video.currentTime / video.duration) * 100).toFixed(2);
         this.currentPercentage = ((video.currentTime / video.duration) * 100).toFixed(2);
+
         if (currentPercentage - this.percentage >= 5) {
           // luu tien do 
           this.saveProgress(currentPercentage);
@@ -358,18 +396,26 @@ export default {
           console.log('Phần trăm đã xem:', this.percentage);
         }
         if (currentPercentage >= 100) {
+
           this.saveProgress(currentPercentage);
           // Đặt biến cờ là true để ngăn cập nhật tiến độ tiếp theo
           this.videoCompleted = true;
-
+          if (this.lesson.haveTest === false) {
+            await axios.get("api/v1/unlock-lesson", {
+              params: { request: this.lessonId },
+              headers: {
+                Authorization: localStorage.getItem("accessToken"),
+              },
+            });
+          }
+          this.fetchLearningLesson()
           this.$notify({
             title: 'Success',
-            message: 'This is a success message',
+            message: 'You are finished the video',
             type: 'success'
           });
-        }
 
-        // Lưu lại watchedPercentage ở đây, bạn có thể gửi nó lên server hoặc lưu vào cơ sở dữ liệu
+        }
 
       }
     },
@@ -402,16 +448,12 @@ export default {
 
     },
     goToTest() {
-      router.push({ path: "/QuizzPage", query: { lessonId: this.lessonId } });
+      router.push({ path: "/QuizzPage", query: { lessonId: this.lessonId, courseId: this.courseId } });
     },
 
 
 
-  },
-  props: {
-    msg: String
-  },
-
+  }
 }
 </script>
 <style scoped>

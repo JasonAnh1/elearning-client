@@ -39,12 +39,14 @@
 </template>
 
 <script>
+import axios from "axios";
 import router from "@/router";
 export default {
     name: 'QuizzPage',
     data() {
         return {
             lessonId: this.$route.query.lessonId,
+            courseId: this.$route.query.courseId
 
         }
     },
@@ -62,12 +64,18 @@ export default {
     },
     methods: {
 
-        checkAnswers() {
+        async checkAnswers() {
 
             let correctCount = 0;
             let validate = true;
+            let AnswerSheetRequest = {
+                lessonId: this.lessonId - '0',
+                answers: []
+            };
+
             for (const question of this.quizzList) {
                 if (question.type === 'MULTIPLECHOICE') {
+
                     // Xác định xem câu trả lời nào được chọn
                     const selectedInput = document.querySelector(`input[name='btnradio${question.id}']:checked`);
 
@@ -90,7 +98,10 @@ export default {
                         if (selectedChoice.trim() === question.answer.trim()) {
                             correctCount++;
                         }
-
+                        AnswerSheetRequest.answers.push({
+                            id: question.id,
+                            answer: selectedChoice.trim()
+                        })
 
                     }
                 } else if (question.type === 'FILLINTHEBLANK') {
@@ -105,18 +116,38 @@ export default {
                         });
                         return;
                     }
+
+                    AnswerSheetRequest.answers.push({
+                        id: question.id,
+                        answer: userAnswer.trim()
+                    })
                     // So sánh với câu trả lời chính xác
                     if (userAnswer.trim().toLowerCase() === question.answer.trim().toLowerCase()) {
+
                         correctCount++;
                     }
+
                 }
 
             }
             if (validate == true) {
+                const response = await axios.post("api/v1/answer-quizzes",AnswerSheetRequest, {
+                    headers: {
+                        Authorization: localStorage.getItem("accessToken"),
+                    },
+                });
+                if (response.data === 'PASS') {
+                    router.push({ path: "/LessonPage", query: { lessonId: this.lessonId, courseId: this.courseId } });
+                } else {
+                    this.$notify.error({
+                        title: 'Error',
+                        message: 'You not pass the test'
+                    });
+                }
                 console.log(correctCount)
+                console.log(AnswerSheetRequest)
             }
-            // // Hiển thị số lượng câu trả lời đúng
-            // alert(`Bạn đã trả lời đúng ${correctCount} câu hỏi.`);
+
 
         },
         addTest() {

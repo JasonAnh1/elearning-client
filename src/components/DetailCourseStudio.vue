@@ -611,7 +611,7 @@ export default {
 
     methods: {
         goToLesson(lessonId) {
-            router.push({ path: "/LessonPage", query: { lessonId: lessonId } });
+            router.push({ path: "/LessonStudio", query: { lessonId: lessonId , courseId: this.courseId} });
         },
         changePic() {
             this.imageFile = URL.createObjectURL(this.$refs.file.files[0])

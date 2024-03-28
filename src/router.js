@@ -14,6 +14,7 @@ import CourseTable from "./components/admin/CourseTable.vue"
 import RevenueChart from "./components/admin/RevenueChart.vue"
 import UpdateQuizzes from "./components/admin/UpdateQuizzes.vue"
 import DetailCourse from "./components/DetailCourse.vue"
+import LessonStudio from "./components/admin/LessonStudio.vue"
 Vue.use(Router)
 
 export default new Router({ 
@@ -31,6 +32,7 @@ export default new Router({
         { path: '/CourseTable', component:CourseTable},
         { path: '/RevenueChart', component:RevenueChart},
         { path: '/UpdateQuizzes', component:UpdateQuizzes},
-        { path: '/DetailCourse', component: DetailCourse}
+        { path: '/DetailCourse', component: DetailCourse},
+        { path: '/LessonStudio', component: LessonStudio}
     ]
 })
