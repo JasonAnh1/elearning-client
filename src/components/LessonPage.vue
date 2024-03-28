@@ -199,92 +199,40 @@
       <div class="col-auto col-md-3 col-xl-3 px-sm-2  ">
         <div class=" text-white min-vh-100">
           <div class="accordion" id="accordionPanelsStayOpenExample">
-            <div class="accordion-item">
+            <div class="accordion-item" v-for="(item, index) in sections" v-bind:key="index">
+
               <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                 <button class="accordion-button fw-bold " type="button" data-bs-toggle="collapse"
-                  data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
-                  aria-controls="panelsStayOpen-collapseOne">
-                  Section:1 Introduce<br />
+                  :data-bs-target="'#target' + index" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                  Section:{{ item.partNumber }} {{ item.title }}<br />
                   1/1
+
                 </button>
 
               </h2>
-              <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show text-dark"
+
+
+
+              <div :id="'target' + index" class="accordion-collapse collapse show text-dark"
                 aria-labelledby="panelsStayOpen-headingOne">
 
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-solid fa-circle-check text-success"></i> <span class="fw-bold"
-                    style="font-size: 14px;">Reading:</span> Introduce
-                </button>
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-regular fa-circle-play"></i> <span class="fw-bold" style="font-size: 14px;">Video:</span>
-                  Introduce 2
+                <button v-for="lesson in item.lessons"  :disabled="lesson.lock" v-bind:key="lesson.id" type="button"
+                  class="list-group-item list-group-item-action fw-bold" aria-current="true"
+                  v-on:click="goToLesson(lesson.id)">
+                
+                    <i class="fa-solid fa-lock"  v-if ="lesson.lock" ></i>
+                
+                  <i class="fa-solid fa-video" v-else-if="lesson.type === 'VIDEO'">
+
+                  </i>
+                  <i class="fa-solid fa-file-lines" v-else-if="lesson.type === 'TEXT'"></i> {{ lesson.title }}
                 </button>
 
 
-              </div>
-            </div>
-            <div class="accordion-item   ">
-              <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
-                  aria-controls="panelsStayOpen-collapseTwo">
-                  Section:2 Detail<br>
-                  4/4
-                </button>
-              </h2>
-              <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse text-dark"
-                aria-labelledby="panelsStayOpen-headingTwo">
-
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-solid fa-book-open"></i> <span class="fw-bold" style="font-size: 14px;">Reading:</span> 1
-                  Lession
-                </button>
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-solid fa-book-open"></i> <span class="fw-bold" style="font-size: 14px;">Reading:</span> 2
-                  Lession
-                </button>
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-regular fa-circle-play"></i> <span class="fw-bold" style="font-size: 14px;">Video:</span>
-                  3 Lession
-                </button>
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-regular fa-circle-play"></i> <span class="fw-bold" style="font-size: 14px;">Video:</span>
-                  4 Lession
-                </button>
 
               </div>
             </div>
-            <div class="accordion-item ">
-              <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
-                  aria-controls="panelsStayOpen-collapseThree">
-                  Section:3 Summary<br>
-                  4/4
-                </button>
-              </h2>
-              <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse text-dark"
-                aria-labelledby="panelsStayOpen-headingThree">
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-solid fa-book-open"></i> <span class="fw-bold" style="font-size: 14px;">Reading:</span> 1
-                  Lession
-                </button>
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-solid fa-book-open"></i> <span class="fw-bold" style="font-size: 14px;">Reading:</span> 2
-                  Lession
-                </button>
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-regular fa-circle-play"></i> <span class="fw-bold" style="font-size: 14px;">Video:</span>
-                  3 Lession
-                </button>
-                <button type="button" class="list-group-item list-group-item-action " aria-current="true">
-                  <i class="fa-regular fa-circle-play"></i> <span class="fw-bold" style="font-size: 14px;">Video:</span>
-                  4 Lession
-                </button>
 
-              </div>
-            </div>
           </div>
           <el-progress class="ms-3 mt-3" type="dashboard" :percentage="currentPercentage" :color="colors"></el-progress>
         </div>
@@ -294,13 +242,15 @@
   </div>
 </template>
 <script>
-
+import axios from "axios";
 import router from "@/router";
 export default {
   name: 'LessonPage',
   data() {
     return {
+      sections: null,
       videoCompleted: false,
+      courseId: this.$route.query.courseId,
       percentage: 0,
       currentPercentage: 0,
       lessonId: this.$route.query.lessonId,
@@ -322,17 +272,10 @@ export default {
       return this.$store.state.currentTargetLesson;
     },
   },
-  mounted() {
+  async mounted() {
     this.$store.dispatch('fetchTargetLesson', this.lessonId);
-    const video = this.$refs.videoPlayer;
-    video.addEventListener('loadedmetadata', () => {
-
-      // Tính thời gian cần tua đến dựa trên phần trăm
-      const targetTime = (this.percentage / 100) * video.duration;
-
-      // Đặt currentTime của video tới thời gian tính được
-      video.currentTime = targetTime;
-    });
+    this.fetchWatchedPercentage(this.lessonId)
+    this.fetchLearningLesson()
 
 
 
@@ -341,31 +284,110 @@ export default {
 
 
   },
+
   methods: {
+
+    async fetchLearningLesson() {
+      try {
+        // Gửi yêu cầu API để lấy phần trăm đã xem từ backend
+        const response = await axios.get("api/v1/list-learning-lesson", {
+          params: { courseId: this.courseId },
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+          },
+        });
+        this.sections = response.data;
+        console.log(this.sections)
+
+      } catch (error) {
+        this.$notify.error({
+          title: 'Error',
+          message: 'There was an error getting the sections plase reload'
+        });
+      }
+
+    },
+    async fetchWatchedPercentage(newLessonId) {
+      try {
+      
+        // Gửi yêu cầu API để lấy phần trăm đã xem từ backend
+        const response = await axios.get("api/v1/get-video-progress", {
+          params: { lessonId: newLessonId },
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+          },
+        });
+        this.currentPercentage = response.data;
+        const watchedPercentage = response.data;
+
+        // Xử lý phần trăm đã xem ở đây (ví dụ: cập nhật giá trị watchedPercentage trong component)
+        this.percentage = watchedPercentage;
+        const video = this.$refs.videoPlayer;
+        video.addEventListener('loadedmetadata', () => {
+
+          // Tính thời gian cần tua đến dựa trên phần trăm
+          const targetTime = (this.percentage / 100) * video.duration;
+
+          // Đặt currentTime của video tới thời gian tính được
+          video.currentTime = targetTime;
+        });
+      } catch (error) {
+      
+        
+        this.$notify.error({
+          title: 'Error',
+          message: 'There was an error getting the percentage viewed'
+        });
+      }
+    },
+    goToLesson(lessonId) {
+      
+      this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId, courseId: this.courseId } })
+      location.reload();
+      
+    },
     updateProgress(event) {
       const video = event.target;
       if (video.duration > 0 && !this.videoCompleted) {
         const currentPercentage = ((video.currentTime / video.duration) * 100).toFixed(2);
         this.currentPercentage = ((video.currentTime / video.duration) * 100).toFixed(2);
-        if (currentPercentage - this.percentage >= 1) {
-          // Gọi hàm để lưu tiến độ
-          // Cập nhật lại tiến độ cuối cùng được ghi lại
+        if (currentPercentage - this.percentage >= 5) {
+          // luu tien do 
+          this.saveProgress(currentPercentage);
           this.percentage = currentPercentage;
           console.log('Phần trăm đã xem:', this.percentage);
         }
         if (currentPercentage >= 100) {
+          this.saveProgress(currentPercentage);
           // Đặt biến cờ là true để ngăn cập nhật tiến độ tiếp theo
           this.videoCompleted = true;
 
           this.$notify({
-          title: 'Success',
-          message: 'This is a success message',
-          type: 'success'
-        });
+            title: 'Success',
+            message: 'This is a success message',
+            type: 'success'
+          });
         }
 
         // Lưu lại watchedPercentage ở đây, bạn có thể gửi nó lên server hoặc lưu vào cơ sở dữ liệu
 
+      }
+    },
+    async saveProgress(percentage) {
+      try {
+        let payload = {
+          videoProgress: percentage,
+          lessonId: this.lessonId
+        }
+        // Gửi yêu cầu API để lưu tiến độ và chờ cho đến khi nó hoàn thành
+        await axios.post("api/v1/update-video-progress", payload, {
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+          },
+        });
+
+      } catch (error) {
+        console.error('Some error when saving video progress:', error);
       }
     },
     addTest() {
