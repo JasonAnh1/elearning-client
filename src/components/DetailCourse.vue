@@ -43,22 +43,21 @@
                                 <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                                     <button class="accordion-button fw-bold " type="button" data-bs-toggle="collapse"
                                         :data-bs-target="'#target' + index" aria-expanded="true"
-                                        aria-controls="panelsStayOpen-collapseOne">
+                                        aria-controls="panelsStayOpen-collapseOne"
+                                        >
                                         Section:{{ item.partNumber }} {{ item.title }}<br />
                                         1/1
 
                                     </button>
 
                                 </h2>
-                              
-
-
+                            
                                 <div :id="'target' + index" class="accordion-collapse collapse show text-dark"
                                     aria-labelledby="panelsStayOpen-headingOne">
 
                                     <button v-for="lesson in item.lessons" v-bind:key="lesson.id" type="button"
                                         class="list-group-item list-group-item-action " aria-current="true"
-                                        v-on:click="goToLesson(lesson.id)">
+                                        v-on:click="goToLesson(lesson.id)" :disabled="!lesson.free">
                                         <i class="fa-solid fa-video" v-if="lesson.type === 'VIDEO'">
 
                                         </i>

@@ -15,6 +15,8 @@ import RevenueChart from "./components/admin/RevenueChart.vue"
 import UpdateQuizzes from "./components/admin/UpdateQuizzes.vue"
 import DetailCourse from "./components/DetailCourse.vue"
 import LessonStudio from "./components/admin/LessonStudio.vue"
+import ChatPage from "./components/chat/ChatPage.vue"
+import LearnerChatPage from "./components/chat/LearnerChatPage.vue"
 Vue.use(Router)
 
 export default new Router({ 
@@ -33,6 +35,8 @@ export default new Router({
         { path: '/RevenueChart', component:RevenueChart},
         { path: '/UpdateQuizzes', component:UpdateQuizzes},
         { path: '/DetailCourse', component: DetailCourse},
-        { path: '/LessonStudio', component: LessonStudio}
+        { path: '/LessonStudio', component: LessonStudio},
+        { path: '/ChatPage', component: ChatPage},
+        { path: '/LearnerChatPage', component: LearnerChatPage}
     ]
 })

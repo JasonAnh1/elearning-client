@@ -302,7 +302,47 @@
               </div>
             </li>
             <li class="nav-item" v-if="userName === null" style="font-size: 14px;">
-              <a class="nav-link btn btn-primary text-white" href="#">Sign up</a>
+              <a class="nav-link btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#learnerSignupModal">Sign up</a>
+              <div class="modal fade" id="learnerSignupModal" tabindex="-1" aria-labelledby="learnerSignupModal"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header bg-purple text-white">
+                      <h5 class="modal-title text-dark" id="learnerSignupModal">Become a ElearnCenter Learner</h5>
+                    </div>
+                    <div class="modal-body">
+                      <p>Join a welcoming online community of learners where you'll find instant access to all the resources you need to create courses. Get support and guidance as you embark on your educational journey, whether you're a beginner or looking to refine your skills. Let's build something great together!.</p>
+                      <form>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" placeholder="Full name" ref="lName">
+                        </div>
+                        <div class="mb-3">
+                          <input type="email" class="form-control" placeholder="Email" ref="lEmail">
+                        </div>
+                        <div class="mb-3">
+                          <input type="number" class="form-control" placeholder="Email" ref="lPhone">
+                        </div>
+                        <div class="mb-3">
+                          <input type="password" class="form-control" placeholder="Password" ref="lPassword">
+                        </div>
+
+                        <div class="form-check mb-3">
+                          <input type="checkbox" class="form-check-input" id="newsletterCheckbox">
+                          <label class="form-check-label" for="newsletterCheckbox">I want to receive emails with insider
+                            tips, motivation, special updates, and promotions reserved for learner.</label>
+                        </div>
+                        <button  class="btn btn-primary" @click="learnerSignUp()" data-bs-dismiss="modal">Sign up</button>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <p>By signing up, you agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy
+                          Policy</a>.
+                      </p>
+                      <p>Already have an account? <a href="#">Log in</a></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </li>
             <li class="nav-item" v-if="userName !== null" style="font-size: 14px;">
               <a class="nav-link text-dark btn" v-on:click="logOutOfSystem()" style="font-size: 14px;">Log out</a>
@@ -493,6 +533,7 @@ export default {
         this.role = localStorage.getItem('role')
       })
     },
+    
     lectureSignUp(){
       let user = new Object();
       user.email = this.$refs.lEmail.value;
@@ -500,6 +541,15 @@ export default {
       user.password = this.$refs.lPassword.value;
       user.phone = this.$refs.lPhone.value;
       this.$store.dispatch('lectureSignUp',user)
+    },
+
+    learnerSignUp(){
+      let user = new Object();
+      user.email = this.$refs.lEmail.value;
+      user.name = this.$refs.lName.value;
+      user.password = this.$refs.lPassword.value;
+      user.phone = this.$refs.lPhone.value;
+      this.$store.dispatch('learnerSignUp',user)
     },
     logOutOfSystem() {
       this.userName = null;

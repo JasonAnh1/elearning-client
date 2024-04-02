@@ -56,6 +56,7 @@ export const store = new Vuex.Store({
     register(state, userRegisted) {
       state.userLogined = userRegisted;
       const accessToken = "Barear " + state.userLogined.accessToken;
+      localStorage.setItem("username", state.userLogined.name);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("role", state.userLogined.roles[0].name);
     },
@@ -158,6 +159,16 @@ export const store = new Vuex.Store({
         router.push({ path: "/LectureStudio" }).catch(() => {});
       }
     },
+    async learnerSignUp(context, payload) {
+      const response = await axios
+        .post("api/v1/auth/signupAsLearner", payload)
+        .catch((error) => console.log(error));
+      if (response !== undefined) {
+        context.commit("loginServer", response.data.body);
+        router.push({ path: "/LearnerPage" }).catch(() => {});
+      }
+    },
+    
     async fetchLogin(context, phone, password) {
       const response = await axios
         .post("api/v1/auth/signin", phone, password)
