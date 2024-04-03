@@ -63,117 +63,157 @@
             <div class="row d-flex justify-content-center">
               <div class="col-md-12">
                 <div class="card" style="border: none;">
-                  <div class="card-body">
-                    <div class="d-flex flex-start align-items-center">
-                      <img class="rounded-circle shadow-1-strong me-3"
-                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="60"
-                        height="60" />
-                      <div>
-                        <h6 class="fw-bold text-primary mb-1">Lily Coleman</h6>
-                        <p class="text-muted small mb-0">
-                          Shared publicly - Jan 2020
-                        </p>
+                  <div v-for="comment in lessonComment" v-bind:key="comment.id">
+                    <div class="card-body">
+                      <div class="d-flex flex-start align-items-center">
+                        <img class="rounded-circle shadow-1-strong me-3"
+                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s"
+                          alt="avatar" width="60" height="60" />
+                        <div>
+                          <h6 class="fw-bold text-primary mb-1">{{ comment.user.name }}</h6>
+                          <p class="text-muted small mb-0">
+                            {{timePassed(comment.updatedAt)  }}
+                          </p>
+                        </div>
                       </div>
-                    </div>
 
-                    <p class="mt-3 mb-4 pb-2">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                      quis nostrud exercitation ullamco laboris nisi ut aliquip consequat.
-                    </p>
+                      <p class="mt-3 mb-4 pb-2">
+                        {{ comment.content }}
+                      </p>
 
-                    <div class="small d-flex justify-content-start">
-                      <a href="#!" class="d-flex align-items-center me-3">
-                        <i class="far fa-thumbs-up me-2"></i>
-                        <p class="mb-0">Like</p>
-                      </a>
-                      <a class="d-flex align-items-center me-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <i class="far fa-comment-dots me-2"></i>
-                        <p class="mb-0">Reply</p>
-                      </a>
-                      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <div class="d-flex flex-start w-100">
-                                <img class="rounded-circle shadow-1-strong me-3"
-                                  src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar"
-                                  width="40" height="40" />
-                                <div class="form-outline w-100">
-                                  <textarea class="form-control" id="textAreaExample" rows="4"
-                                    style="background: #fff;"></textarea>
-
-                                </div>
+                      <div class="small d-flex justify-content-start">
+                        <a href="#!" class="d-flex align-items-center me-3 cursor-pointer">
+                          <i class="far fa-thumbs-up me-2"></i>
+                          <p class="mb-0">Like</p>
+                        </a>
+                        <a class="d-flex align-items-center me-3 cursor-pointer" data-bs-toggle="modal" :data-bs-target="'#exampleModal'+ comment.id">
+                          <i class="far fa-comment-dots me-2"></i>
+                          <p class="mb-0">Reply</p>
+                        </a>
+                        
+                        <div class="modal fade" :id="'exampleModal' + comment.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+                          aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Reply <span class="fw-bold" >{{comment.user.name  }}</span></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                  aria-label="Close"></button>
                               </div>
+                              <div class="modal-body">
+                                <div class="d-flex flex-start w-100">
+                                  <img class="rounded-circle shadow-1-strong me-3"
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s" alt="avatar"
+                                    width="40" height="40" />
+                                  <div class="form-outline w-100">
+                                    <textarea class="form-control" id="textAreaExample" rows="4"
+                                      style="background: #fff;" v-model="replyLessonComment"></textarea>
 
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <button type="button" class="btn btn-primary">Reply</button>
+                                  </div>
+                                </div>
+
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" @click="replyComment(comment)" data-bs-dismiss="modal" >Reply</button>
+                              </div>
                             </div>
                           </div>
                         </div>
+                        
+                        <a  class="d-flex align-items-center me-3 cursor-pointer"
+                        @click="displayReplyComment(comment)">
+                          <i class="fas fa-share me-2"></i>
+                          <p class="mb-0">{{comment.childrenComments.length}} answer</p>
+                        </a>
                       </div>
-                      <a href="#!" class="d-flex align-items-center me-3">
-                        <i class="fas fa-share me-2"></i>
-                        <p class="mb-0">Share</p>
-                      </a>
                     </div>
-                  </div>
-                  <div class="card-body tier-2 w-75 ms-5">
-                    <div class="d-flex flex-start align-items-center">
-                      <img class="rounded-circle shadow-1-strong me-3"
-                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="60"
-                        height="60" />
-                      <div>
-                        <h6 class="fw-bold text-primary mb-1">Lily Coleman</h6>
-                        <p class="text-muted small mb-0">
-                          Shared publicly - Jan 2020
+                    <div  v-for="subComment in comment.childrenComments" v-bind:key="subComment.id" :class="{ 'd-none': comment.hiden }">
+                      <div class="card-body tier-2 w-75 ms-5">
+                        <div class="d-flex flex-start align-items-center">
+                          <img class="rounded-circle shadow-1-strong me-3"
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s"
+                            alt="avatar" width="60" height="60" />
+                          <div>
+                            <h6 class="fw-bold text-primary mb-1">{{ subComment.user.name }}</h6>
+                            <p class="text-muted small mb-0">
+                              {{ timePassed(subComment.updatedAt) }}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p class="mt-3 mb-4 pb-2">
+                          <span class="fw-bold">{{ subComment.parentUserName }}</span> {{ subComment.content }}
                         </p>
+
+                        <div class="small d-flex justify-content-start">
+                          <a href="#!" class="d-flex align-items-center me-3">
+                            <i class="far fa-thumbs-up me-2"></i>
+                            <p class="mb-0">Like</p>
+                          </a>
+
+                          <a href="#!" class="d-flex align-items-center me-3">
+                            <i class="fas fa-share me-2"></i>
+                            <p class="mb-0">Share</p>
+                          </a>
+                          <a class="d-flex align-items-center me-3" data-bs-toggle="modal" :data-bs-target="'#exampleModal'+ subComment.id">
+                          <i class="far fa-comment-dots me-2"></i>
+                          <p class="mb-0">Reply</p>
+                        </a>
+                        
+                        <div class="modal fade" :id="'exampleModal' + subComment.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+                          aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Reply <span class="fw-bold" >{{subComment.user.name  }}</span></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                  aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="d-flex flex-start w-100">
+                                  <img class="rounded-circle shadow-1-strong me-3"
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s" alt="avatar"
+                                    width="40" height="40" />
+                                  <div class="form-outline w-100">
+                                    <textarea class="form-control" id="textAreaExample" rows="4"
+                                      style="background: #fff;" v-model="replyLessonComment"></textarea>
+
+                                  </div>
+                                </div>
+
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary"  data-bs-dismiss="modal"  @click="replyComment(subComment)">Reply</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
                       </div>
                     </div>
-
-                    <p class="mt-3 mb-4 pb-2">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                      quis nostrud exercitation ullamco laboris nisi ut aliquip consequat.
-                    </p>
-
-                    <div class="small d-flex justify-content-start">
-                      <a href="#!" class="d-flex align-items-center me-3">
-                        <i class="far fa-thumbs-up me-2"></i>
-                        <p class="mb-0">Like</p>
-                      </a>
-
-                      <a href="#!" class="d-flex align-items-center me-3">
-                        <i class="fas fa-share me-2"></i>
-                        <p class="mb-0">Share</p>
-                      </a>
-                    </div>
                   </div>
+
+
                   <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
                     <div class="d-flex flex-start w-100">
                       <img class="rounded-circle shadow-1-strong me-3"
-                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="40"
-                        height="40" />
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s"
+                        alt="avatar" width="40" height="40" />
                       <div class="form-outline w-100">
-                        <textarea class="form-control" id="textAreaExample" rows="4"
-                          style="background: #fff;"></textarea>
+                        <textarea class="form-control" id="textAreaExample" rows="4" style="background: #fff;"
+                          v-model="commentContent"></textarea>
 
                       </div>
                     </div>
                     <div class="float-end mt-2 pt-1">
-                      <button type="button" class="btn btn-primary btn-sm">Post comment</button>
+                      <button type="button" class="btn btn-primary btn-sm" @click="saveComment()">Post comment</button>
                       <button type="button" class="btn btn-outline-primary btn-sm">Cancel</button>
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -255,12 +295,15 @@ export default {
   name: 'LessonPage',
   data() {
     return {
+      replyLessonComment:null,
+      commentContent: null,
       sections: null,
       videoCompleted: false,
       courseId: this.$route.query.courseId,
       percentage: 0,
       currentPercentage: 0,
       lessonId: this.$route.query.lessonId,
+      lessonComment: null,
       role: localStorage.getItem('role'),
       colors: [
         { color: '#f56c6c', percentage: 20 },
@@ -284,10 +327,18 @@ export default {
 
     if (this.lesson.type === 'VIDEO') {
       this.fetchWatchedPercentage(this.lessonId)
-    }else if(this.lesson.type === 'TEXT' && this.lesson.haveTest === false)
-    {
+    } else if (this.lesson.type === 'TEXT' && this.lesson.haveTest === false) {
       window.addEventListener('scroll', this.handleScroll);
     }
+
+    const listLessonComment = await axios.get("api/v1/list-lesson-comment", {
+      params: { request: this.lessonId },
+      headers: {
+        Authorization: localStorage.getItem("accessToken"),
+      },
+    });
+
+    this.lessonComment = listLessonComment.data
 
     this.fetchLearningLesson()
 
@@ -298,12 +349,12 @@ export default {
   methods: {
     handleScroll() {
       // Lấy vị trí hiện tại của thanh cuộn
-    let scrollPosition = window.scrollY;
+      let scrollPosition = window.scrollY;
 
 
       // Kiểm tra nếu thanh cuộn đã đến đoạn nhất định (ví dụ: 500px)
       if (scrollPosition >= (document.body.clientHeight - window.innerHeight - 1080)) {
-       
+
         this.triggerFunction();
         window.removeEventListener('scroll', this.handleScroll);
       }
@@ -436,27 +487,139 @@ export default {
         console.error('Some error when saving video progress:', error);
       }
     },
-    addTest() {
-      router.push({ path: "/CreateQuizzes", query: { lessonId: this.lessonId } });
 
-    },
-    updateLesson() {
-      router.push({ path: '/CreateLesson', query: { lessonId: this.lessonId } })
-    },
-    updateTest() {
-      router.push({ path: "/UpdateQuizzes", query: { lessonId: this.lessonId } });
-
-    },
     goToTest() {
       router.push({ path: "/QuizzPage", query: { lessonId: this.lessonId, courseId: this.courseId } });
     },
+    async saveComment() {
+      const payload = {
+        lessonId: this.lessonId,
+        content: this.commentContent
+      }
 
+      try {
+        await axios.post("api/v1/create-lesson-comment", payload, {
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+          },
+        });
+        this.$notify({
+          title: 'Success',
+          message: 'Your comment saved',
+          type: 'success'
+        })
+        // If the request is successful, clear the commentContent
+        this.commentContent = null;
+      } catch (error) {
+        // Handle errors here
+        this.$notify.error({
+          title: 'Failed',
+          message: 'Your comment saved'
+        })
+      }
 
+      const listLessonComment = await axios.get("api/v1/list-lesson-comment", {
+        params: { request: this.lessonId },
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
+      listLessonComment.childrenComments = true;
+      this.lessonComment = listLessonComment.data
 
+    },
+    async replyComment(comment) {
+      console.log(this.replyLessonComment)
+      let savedCommentId;
+      if(comment.parentCommentId ===  null || comment.parentCommentId ===  undefined )
+      {
+        savedCommentId = comment.id;
+      }else{
+        savedCommentId = comment.parentCommentId;
+      }
+
+      
+      const payload = {
+        lessonId: this.lessonId,
+        content: this.replyLessonComment,
+        parentCommentId: savedCommentId,
+        parentUserName: comment.user.name
+      }
+      console.log(payload)
+      try {
+        await axios.post("api/v1/create-lesson-comment", payload, {
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+          },
+        });
+        this.$notify({
+          title: 'Success',
+          message: 'Your comment saved',
+          type: 'success'
+        })
+        // If the request is successful, clear the commentContent
+        this.commentContent = null;
+      } catch (error) {
+        // Handle errors here
+        this.$notify.error({
+          title: 'Failed',
+          message: 'Your comment saved'
+        })
+      }
+
+      const listLessonComment = await axios.get("api/v1/list-lesson-comment", {
+        params: { request: this.lessonId },
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
+      this.lessonComment = listLessonComment.data
+
+    },
+    timePassed(createdAt) {
+      // Thời điểm đã lưu
+      const savedMoment = new Date(createdAt);
+      
+      // Thời điểm hiện tại
+      const currentMoment = new Date();
+      
+      // Tính toán thời gian đã trôi qua (tính bằng milliseconds)
+      const timeDifference = currentMoment - savedMoment;
+      
+      // Chuyển đổi thời gian từ milliseconds sang giờ, phút, giây
+      const seconds = Math.floor(timeDifference / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days =  Math.floor(hours / 24);
+
+      if(minutes < 3){
+        return `just now`;
+      }
+
+      if (hours < 1) {
+        return `${minutes} minutes ago`;
+      } else if (hours < 24) {
+        return `${hours} hours ago`;
+      } else if (days < 30) {
+        return `${days} days ago`;
+      }
+      else {
+        const months = Math.floor(days / 30);
+        return `${months} months ago`;
+      }
+    },
+    displayReplyComment(comment) {
+      console.log( comment.hiden)
+      // Toggle 'hidden' property for each sub-comment
+      comment.hiden = !comment.hiden
+    }
   }
 }
 </script>
 <style scoped>
+.cursor-pointer{
+  cursor: pointer;
+}
 /* CSS */
 .video-container {
 
