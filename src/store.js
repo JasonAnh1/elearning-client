@@ -63,6 +63,9 @@ export const store = new Vuex.Store({
     getListCourseCategory(state, courseCategories) {
       state.lstCourseCategory = courseCategories;
     },
+    getListCourseForLearner(state,courses){
+      state.listCourseForLearner = courses;
+    },
     getListCourseForLecture(state, courses) {
       state.lstCourseForLecture = courses;
     },
@@ -151,6 +154,7 @@ export const store = new Vuex.Store({
       context.commit("getCurrentTargetLesson", response.data);
     },
     async lectureSignUp(context, payload) {
+
       const response = await axios
         .post("api/v1/auth/signupaslecture", payload)
         .catch((error) => console.log(error));
@@ -158,15 +162,14 @@ export const store = new Vuex.Store({
         context.commit("loginServer", response.data.body);
         router.push({ path: "/LectureStudio" }).catch(() => {});
       }
+
+      
     },
     async learnerSignUp(context, payload) {
-      const response = await axios
-        .post("api/v1/auth/signupAsLearner", payload)
-        .catch((error) => console.log(error));
-      if (response !== undefined) {
+        const response = await axios.post("api/v1/auth/signupAsLearner", payload);
         context.commit("loginServer", response.data.body);
         router.push({ path: "/LearnerPage" }).catch(() => {});
-      }
+     
     },
     
     async fetchLogin(context, phone, password) {
@@ -210,7 +213,9 @@ export const store = new Vuex.Store({
       });
     },
     async fetchUpdateLesson(context, payload) {
-      if (payload.media != undefined) {
+
+      if (payload.media != undefined ) {
+      
         const responseMedia = await axios.post(
           "api/v1/file/upload-video",
           payload.media,
@@ -345,6 +350,14 @@ export const store = new Vuex.Store({
       });
 
       context.commit("getListCourseForLecture", response.data.body);
+    },
+    async fetchListCourseForLearner(context) {
+      const response = await axios.get("api/v1/list-course-enrolled",{
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
+      context.commit("getListCourseForLearner", response.data.body);
     },
     async fetchListCourseFoUser(context, page) {
       const userId = localStorage.getItem("ownerId");

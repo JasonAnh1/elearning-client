@@ -635,7 +635,7 @@ export default {
                 id: sectionId,
                 title: this.$refs['uTitle' + sectionId][0].value,
                 partNumber: this.$refs['uPartNumber' + sectionId][0].value,
-
+                courseId: this.courseId
             })
 
             this.$store.dispatch('fetchUpdateCourseSection', { 'courseId': this.courseId, 'request': updateSection });

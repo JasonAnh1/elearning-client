@@ -1,11 +1,11 @@
 <template>
-  <div class="container">
-    <div v-if="userData.connected" class="chat-box">
+  <div class="container-fluid">
+    <div v-if="userData.connected" class="chat-box ">
       <div class="member-list">
         <ul>
           <div v-for="(name, index) in privateChats.keys()" :key="index">
             <li class="btn btn-primary mt-2 w-100" v-if="name !== currentUser" @click="setTab(name)"
-              :class="{ active: tab === name }">{{ name }} <span class="bg-danger rounded-circle ps-1 pe-1" style="padding-left: 7px;" v-if=" countNotification.get(name) !== 0 ">{{ countNotification.get(name) }}</span></li>
+              :class="{ active: tab === name }">{{ name }}</li>
 
           </div>
 
@@ -24,7 +24,7 @@
         </ul>
         <div class="send-message">
           <input type="text" class="input-message" placeholder="enter the message" v-model="userData.message" />
-          <button type="button" class="send-button" @click="sendPrivateValue">send</button>
+          <button type="button" class="send-button" @click="sendPrivateValue"><i class="fa-regular fa-paper-plane"></i></button>
         </div>
       </div>
     </div>
@@ -135,8 +135,15 @@ export default {
         type: 'success',
         position: 'bottom-left'
       });
-      let currentCount = this.countNotification.get(payloadData.senderName);
-      this.countNotification.set(payloadData.senderName,currentCount + 1);
+
+      if(payloadData.status === "MESSAGE"){
+        let currentCount = this.countNotification.get(payloadData.senderName);
+         this.countNotification.set(payloadData.senderName,currentCount + 1); 
+      }else if(payloadData.status === "JOIN"){
+        this.countNotification.set(payloadData.senderName, 0)
+      }
+    
+     
       if (this.privateChats.get(payloadData.senderName)) {
         this.privateChats.get(payloadData.senderName).push(payloadData);
       } else {
@@ -246,8 +253,6 @@ button {
 }
 
 .chat-box {
-  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048), 0 12.5px 10px rgba(0, 0, 0, 0.06), 0 22.3px 17.9px rgba(0, 0, 0, 0.072), 0 41.8px 33.4px rgba(0, 0, 0, 0.086), 0 100px 80px rgba(0, 0, 0, 0.12);
-  margin: 40px 50px;
   height: 600px;
   padding: 10px;
   display: flex;
@@ -259,7 +264,7 @@ button {
 }
 
 .chat-content {
-  width: 80%;
+  width: 100%;
   margin-left: 10px;
 }
 

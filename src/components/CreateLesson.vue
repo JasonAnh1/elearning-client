@@ -76,9 +76,20 @@
                     <input type="text" class="form-control" id="exampleFormControlInput1" v-model="lTitle">
                 </div>
                 <div class="mb-3">
+                    <select class="form-select" aria-label="Default select example" v-model="lFree">
+                        <option :value=false >Not free</option>
+                        <option :value=true>Free</option>
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label">Pass threshold</label>
                     <input type="number" class="form-control" id="exampleFormControlInput1" v-model="lPassThreshold"
                         placeholder="Number of questions to answer correctly to pass this lesson.">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Lesson position</label>
+                    <input type="number" class="form-control" id="exampleFormControlInput1" v-model="lPosition"
+                        placeholder="position of lesson in this course part.">
                 </div>
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">Content</label>
@@ -136,7 +147,9 @@ export default {
             lContent: null,
             lType: null,
             lTitle: null,
-            lPassThreshold: 0
+            lPassThreshold: null,
+            lPosition: null,
+            lFree: false
         }
     },
     components: {
@@ -151,14 +164,17 @@ export default {
         },
     },
     mounted() {
+   
         if (this.lessonId !== null && this.lessonId !== undefined) {
             this.$store.dispatch('fetchTargetLesson', this.lessonId);
             this.lTitle = this.lessonCurrent.title;
+            this.lPosition = this.lessonCurrent.position;
             this.lContent = this.lessonCurrent.content;
             this.lPassThreshold = this.lessonCurrent.passThreshold;
             this.lType = this.lessonCurrent.type;
             this.videoSource = this.lessonCurrent.media.originUrl;
             this.imageFile = this.lessonCurrent.media.thumbUrl;
+            this.lFree = this.lessonCurrent.free;
             if (this.videoSource !== null && this.videoSource !== undefined) {
                 this.showVideo = true
             }
@@ -168,16 +184,22 @@ export default {
     methods: {
 
         updateLesson() {
-            if (this.lType === 'VIDEO') {
+
+            if (this.lType === 'VIDEO' && this.$refs.thumbFile.files[0] !== undefined && this.$refs.videoFile.files[0]) {
+
                 var formData = new FormData();
                 formData.append('thumbFile', this.$refs.thumbFile.files[0]);
                 formData.append('videoFile', this.$refs.videoFile.files[0]);
+
             }
             this.lesson = new Object({
                 title: this.lTitle,
                 content: this.lContent,
                 type: this.lType,
-                id: this.lessonId
+                id: this.lessonId,
+                passThreshold: this.lPassThreshold,
+                position: this.lPosition,
+                free: this.lFree
             })
 
             // fetchUpdateLesson
@@ -200,7 +222,8 @@ export default {
                 title: this.lTitle,
                 content: this.lContent,
                 coursePartId: this.courseSectionId,
-                type: this.lType
+                type: this.lType,
+                position: this.lPosition
             })
             this.$store.dispatch('fetchAddLesson', { 'media': formData, 'request': this.lesson })
             this.$router.go(-1);
@@ -211,9 +234,9 @@ export default {
                 // Kiểm tra xem video và hình ảnh đã được chọn chưa
                 if (!this.$refs.videoFile.files.length || !this.$refs.thumbFile.files.length) {
                     this.$notify.error({
-                    title: 'Error',
-                    message: 'Please select video and thumb image.'
-                });
+                        title: 'Error',
+                        message: 'Please select video and thumb image.'
+                    });
                     return false;
                 }
             }
@@ -231,7 +254,7 @@ export default {
             if (this.lType === 'TEXT' && !this.lContent) {
                 this.$notify.error({
                     title: 'Error',
-                    message:'Please fill in content field.'
+                    message: 'Please fill in content field.'
                 });
                 return false;
             }

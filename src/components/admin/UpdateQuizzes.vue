@@ -142,7 +142,7 @@ export default {
             payload.questions = this.questions
 
 
-            let flag = false;
+            let flag = true;
             this.questions
                 .filter(question => question.qType === 'MULTIPLECHOICE')
                 .every(question => {

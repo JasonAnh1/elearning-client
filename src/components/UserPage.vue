@@ -218,7 +218,11 @@
             </li>
             <li class="nav-item" v-if="role === 'ROLE_LECTURE'">
 
-<a class="nav-link" style="font-size: 14px;" @click="goLecturePage()">LectureStudio</a>
+<a class="nav-link" style="font-size: 14px;" @click="goLecturePage()">Lecture Studio</a>
+</li>
+<li class="nav-item" v-if="role === 'ROLE_LEARNER'">
+
+<a class="nav-link pointer-cusor" style="font-size: 14px;" @click="goLearnerPage()">Learner Hub</a>
 </li>
             
             <li class="nav-item">
@@ -314,13 +318,13 @@
                       <p>Join a welcoming online community of learners where you'll find instant access to all the resources you need to create courses. Get support and guidance as you embark on your educational journey, whether you're a beginner or looking to refine your skills. Let's build something great together!.</p>
                       <form>
                         <div class="mb-3">
-                          <input type="text" class="form-control" placeholder="Full name" ref="lName">
+                          <input type="text" class="form-control" placeholder="user name" ref="lName">
                         </div>
                         <div class="mb-3">
                           <input type="email" class="form-control" placeholder="Email" ref="lEmail">
                         </div>
                         <div class="mb-3">
-                          <input type="number" class="form-control" placeholder="Email" ref="lPhone">
+                          <input type="number" class="form-control" placeholder="phone" ref="lPhone">
                         </div>
                         <div class="mb-3">
                           <input type="password" class="form-control" placeholder="Password" ref="lPassword">
@@ -518,6 +522,10 @@ export default {
     goLecturePage() {
       this.$router.push({ path: "/LectureStudio" })
     },
+    goLearnerPage()
+    {
+      this.$router.push({ path: "/LearnerPage" })
+    },
     goToCart() {
       this.$router.push({ path: "/CartPage" })
     },
@@ -540,7 +548,11 @@ export default {
       user.name = this.$refs.lName.value;
       user.password = this.$refs.lPassword.value;
       user.phone = this.$refs.lPhone.value;
-      this.$store.dispatch('lectureSignUp',user)
+      try{
+        this.$store.dispatch('lectureSignUp',user)
+      } catch (error) {
+        this.$message.error('some thing when wrong');
+      }
     },
 
     learnerSignUp(){

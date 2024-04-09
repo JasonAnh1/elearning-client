@@ -288,14 +288,13 @@
                     <h5 class="fw-bold" style="font-size: 16px;">
                       {{ item.title }}
                     </h5>
-                    <p class="text-muted" style="font-size: 12px;">Jhoe Doe</p>
-                    <p class="fw-bold">4.5 <i class="fa-solid fa-star text-warning"></i><i
-                        class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i
-                        class="fa-solid fa-star text-warning"></i><i
-                        class="fa-regular fa-star-half-stroke text-warning"></i><span class="text-muted"
-                        style="font-size: 12px;">(123123)</span></p>
-                    <p class="fw-bold">đ {{ item.priceSale }}<s class="text-muted fw-light">đ {{ item.price }}</s> <span
-                        class="badge bg-info text-dark">Highrate</span></p>
+                    <p class="text-muted" style="font-size: 12px;">{{ item.author.name }}</p>
+            
+                    <p class="fw-bold"> <el-rate :value="item.rating" disabled show-score
+                        text-color="#ff9900" score-template="{value}  ">
+                      </el-rate><span class="text-muted" style="font-size: 10px;"><i class="fa-solid fa-user me-1"></i>{{ item.learnerNumber }}</span></p>
+                    <p class="fw-bold"> {{ formatCurrency(item.priceSale) }}<s class="text-muted fw-light">
+                        {{ formatCurrency(item.price) }}</s> <span class="badge bg-info text-dark">Highrate</span></p>
 
                   </div>
                   <div class="card-footer " style="background-color: white;border: none;">
@@ -313,131 +312,11 @@
             </carousel>
             <!-- ket thuc -->
           </div>
-          <div class="row mt-5">
+          <div class=" mt-5">
             <h4 class="fw-bold">Books<span class="badge bg-secondary"></span></h4>
             <!-- Sach  -->
-            <div class="card-group gap-4">
-              <div class="card shadow-sm" style="border: none;">
-                <img style="height: 230px"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6zcRVsB_Ng0BnS2UVm6-fYbzVByRrhECgSw&usqp=CAU"
-                  class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="fw-bold " style="font-size: 16px;">Training for Seniors</h5>
-                  <p class="text-muted" style="font-size: 12px;">Jhoe Doe</p>
-                  <p class="fw-bold">4.5 <i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i
-                      class="fa-regular fa-star-half-stroke text-warning"></i><span class="text-muted"
-                      style="font-size: 12px;">(123123)</span></p>
-                  <p class="fw-bold">$10.99 <s class="text-muted fw-light">$19.99</s></p>
+            <BookCarousel></BookCarousel>
 
-                </div>
-                <div class="card-footer" style="background-color: white;border: none;">
-                  <button class="btn btn-primary w-75 text-white fw-bold"
-                    style="background-color: #3d75ee;border: none;">Add to
-                    cart</button>
-                  <button class="rounded-circle ms-2 px-2 py-1" style="background-color: white;"><i
-                      class="fa-regular fa-heart text-primary"></i></button>
-                </div>
-              </div>
-              <div class="card shadow-sm" style="border: none;">
-                <img style="height: 230px"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnYhYPdX-BW8HoDbMa8Rajzo4KyFnGpfCDaw&usqp=CAU"
-                  class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="fw-bold " style="font-size: 16px;">Black history</h5>
-                  <p class="text-muted" style="font-size: 12px;">Jhoe Doe</p>
-                  <p class="fw-bold">4.5 <i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i
-                      class="fa-regular fa-star-half-stroke text-warning"></i><span class="text-muted"
-                      style="font-size: 12px;">(123123)</span></p>
-                  <p class="fw-bold">$10.99 <s class="text-muted fw-light">$19.99</s></p>
-
-                </div>
-                <div class="card-footer" style="background-color: white;border: none;">
-                  <button class="btn btn-primary w-75 text-white fw-bold"
-                    style="background-color: #3d75ee;border: none;">Add to
-                    cart</button>
-                  <button class="rounded-circle ms-2 px-2 py-1" style="background-color: white;"><i
-                      class="fa-regular fa-heart text-primary"></i></button>
-                </div>
-              </div>
-
-              <div class="card shadow-sm" style="border: none;">
-                <img style="height: 230px"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbZRoL1GBMq1v2WrUvfFve_1_usAI7O-x72A&usqp=CAU"
-                  class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="fw-bold " style="font-size: 16px;">Cook for family</h5>
-                  <p class="text-muted" style="font-size: 12px;">Jhoe Doe</p>
-                  <p class="fw-bold">4.5 <i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i
-                      class="fa-regular fa-star-half-stroke text-warning"></i><span class="text-muted"
-                      style="font-size: 12px;">(123123)</span></p>
-                  <p class="fw-bold">$10.99 <s class="text-muted fw-light">$19.99</s></p>
-
-                </div>
-                <div class="card-footer" style="background-color: white;border: none;">
-                  <button class="btn btn-primary w-75 text-white fw-bold"
-                    style="background-color: #3d75ee;border: none;">Add to
-                    cart</button>
-                  <button class="rounded-circle ms-2 px-2 py-1" style="background-color: white;"><i
-                      class="fa-regular fa-heart text-primary"></i></button>
-                </div>
-              </div>
-
-              <div class="card shadow-sm" style="border: none;">
-                <img style="height: 230px"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRogbEtIsnf6SFx47n1vF7oFc3M1Zttls0V-A&usqp=CAU"
-                  class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="fw-bold " style="font-size: 16px;">New Kid </h5>
-                  <p class="text-muted" style="font-size: 12px;">Jhoe Doe</p>
-                  <p class="fw-bold">4.5 <i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i
-                      class="fa-regular fa-star-half-stroke text-warning"></i><span class="text-muted"
-                      style="font-size: 12px;">(123123)</span></p>
-                  <p class="fw-bold">$10.99 <s class="text-muted fw-light">$19.99</s></p>
-
-                </div>
-                <div class="card-footer" style="background-color: white;border: none;">
-                  <button class="btn btn-primary w-75 text-white fw-bold"
-                    style="background-color: #3d75ee;border: none;">Add to
-                    cart</button>
-                  <button class="rounded-circle ms-2 px-2 py-1" style="background-color: white;"><i
-                      class="fa-regular fa-heart text-primary"></i></button>
-                </div>
-              </div>
-
-              <div class="card shadow-sm" style="border: none;">
-                <img style="height: 230px"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrLYe-ZizrlhT8XnGC88nHPOrgvBnuDWq-Ew&usqp=CAU"
-                  class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="fw-bold " style="font-size: 16px;">True beauty</h5>
-                  <p class="text-muted" style="font-size: 12px;">Jhoe Doe</p>
-                  <p class="fw-bold">4.5 <i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i class="fa-solid fa-star text-warning"></i><i
-                      class="fa-solid fa-star text-warning"></i><i
-                      class="fa-regular fa-star-half-stroke text-warning"></i><span class="text-muted"
-                      style="font-size: 12px;">(123123)</span></p>
-                  <p class="fw-bold">$10.99 <s class="text-muted fw-light">$19.99</s></p>
-
-                </div>
-                <div class="card-footer" style="background-color: white;border: none;">
-                  <button class="btn btn-primary w-75 text-white fw-bold"
-                    style="background-color: #3d75ee;border: none;">Add to
-                    cart</button>
-                  <button class="rounded-circle ms-2 px-2 py-1" style="background-color: white;"><i
-                      class="fa-regular fa-heart text-primary"></i></button>
-                </div>
-              </div>
-
-
-            </div>
             <!-- ket thuc -->
           </div>
           <div class="row mt-5 container">
@@ -550,13 +429,13 @@
       </div>
 
 
-
     </div>
   </div>
 </template>
 
 <script>
 import { Carousel, Slide } from 'vue-carousel';
+import BookCarousel from "@/components/book/BookCarousel";
 export default {
   data() {
     return {
@@ -582,7 +461,8 @@ export default {
   },
   components: {
     Carousel,
-    Slide
+    Slide,
+    BookCarousel
   },
   name: 'HomeContent',
   props: {
@@ -594,6 +474,9 @@ export default {
     window.addEventListener('resize', this.checkScreenSize);
   },
   methods: {
+    formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        },
     goToDetail(id) {
       this.$router.push({ path: "/DetailCourse", query: { courseId: id } });
     },
@@ -619,7 +502,7 @@ export default {
     },
     addCourseToCart(item) {
       item.type = "COURSE";
-      console.log(item)
+
       // let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
       // let itemExists = cartItems.some(cartItem => cartItem.id === item.id);
       let itemExists = this.cartItems.some(cartItem => cartItem.id === item.id);

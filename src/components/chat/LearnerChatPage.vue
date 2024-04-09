@@ -1,9 +1,9 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <div v-if="userData.connected" class="chat-box">
-            <div class="member-list">
+            <div class="member-list ">
                 <ul>
-                    <li class="btn btn-primary mt-2 disabled">{{ tab }}</li>
+                    <li class="btn btn-primary mt-2 disabled w-100">{{ tab }}</li>
 
                 </ul>
             </div>
@@ -21,7 +21,7 @@
                 <div class="send-message">
                     <input type="text" class="input-message" placeholder="enter the message"
                         v-model="userData.message" />
-                    <button type="button" class="send-button" @click="sendPrivateValue">send</button>
+                    <button type="button" class="send-button" @click="sendPrivateValue"><i class="fa-regular fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@ export default {
             stompClient: null,
             privateChats: new Map(),
             publicChats: [],
-            tab: "Jhon Smith",
+            tab: this.$route.query.leactureName,
             currentUser: localStorage.getItem('username'),
             userData: {
                 username: localStorage.getItem('username'),
@@ -231,8 +231,8 @@ button {
 }
 
 .chat-box {
-    box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048), 0 12.5px 10px rgba(0, 0, 0, 0.06), 0 22.3px 17.9px rgba(0, 0, 0, 0.072), 0 41.8px 33.4px rgba(0, 0, 0, 0.086), 0 100px 80px rgba(0, 0, 0, 0.12);
-    margin: 40px 50px;
+
+ 
     height: 600px;
     padding: 10px;
     display: flex;

@@ -514,7 +514,7 @@ export default {
         // Handle errors here
         this.$notify.error({
           title: 'Failed',
-          message: 'Your comment saved'
+          message: 'Your comment can not saved'
         })
       }
 

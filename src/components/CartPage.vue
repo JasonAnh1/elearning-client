@@ -10,8 +10,8 @@
 
             <div class="row">
                 <div class="col-lg-8">
-                    <h1 class="mt-4">Giỏ hàng</h1>
-                    <p class="text-muted">2 khóa học trong giỏ hàng</p>
+                    <h1 class="mt-4">Cart</h1>
+                    <p class="text-muted">{{ cartItems.length }} items in cart</p>
                     <div class="card mb-3" v-for="(item, index) in cartItems" :key="index">
                         <div class="row g-0">
                             <div class="col-md-4">
@@ -45,14 +45,14 @@
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-outline-primary">Tiếp tục mua sắm</button>
+                        <button type="button" class="btn btn-outline-primary" @click="goToHome()">continue</button>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="card mt-4">
                         <div class="card-body">
-                            <h5 class="card-title">Tổng: ₫ {{ total }}</h5>
-                            <p class="card-text">Giảm ₫ 7000 Giảm 51%</p>
+                            <h5 class="card-title">Total:  {{ formatCurrency(total) }}</h5>
+                            <p class="card-text">Discount:  {{ formatCurrency(totalDiscount()) }} - {{totalDiscountPercentage()  }}%</p>
                             <p class="fw-bold">Choose bank:</p>
                             <select id="bankSelect" v-model="bankCode" class="form-select  mb-2 form-control"
                                 aria-label="Default select example">
@@ -63,19 +63,17 @@
                                 <!-- Thêm các option khác tùy theo nhu cầu -->
                             </select>
 
-                            <button type="button" class="btn btn-primary w-100" v-on:click="checkOut()">Thanh
-                                toán</button>
+                            <button type="button" class="btn btn-primary w-100" v-on:click="checkOut()">Check out</button>
                             <div class="input-group mt-3">
-                                <input type="text" class="form-control" placeholder="Khuyến mãi" aria-label="Khuyến mãi"
+                                <input type="text" class="form-control" placeholder="promotional code" aria-label="Khuyến mãi"
                                     aria-describedby="button-addon2">
-                                <button class="btn btn-outline-secondary" type="button" id="button-addon2">Áp
-                                    dụng</button>
+                                <button class="btn btn-outline-secondary" type="button" id="button-addon2">Apply</button>
                             </div>
                         </div>
                     </div>
                     <div class="card mt-3">
                         <div class="card-body">
-                            <h5 class="card-title">Bạn cũng có thể thích</h5>
+                            <h5 class="card-title">You may also like </h5>
                             <div class="row row-cols-2 g-2">
                                 <div class="col">
                                     <div class="card h-100">
@@ -147,10 +145,42 @@ export default {
         }
     },
     mounted() {
-
+        console.log(this.cartItems)
 
     },
     methods: {
+        goToHome() {
+            this.$router.push({ path: "/" });
+        },
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        },
+        totalDiscount() {
+            let totalDiscountAmount = 0;
+            for (let item of this.cartItems) {
+                // Tính tổng số tiền giảm
+                totalDiscountAmount += item.price - item.priceSale;
+            }
+            return totalDiscountAmount;
+        },
+        totalDiscountPercentage() {
+            let totalDiscountPercentage = 0;
+            let totalPrice = 0;
+            let totalSalePrice = 0;
+
+            for (let item of this.cartItems) {
+                // Tính tổng giá gốc và tổng giá sau khi giảm
+                totalPrice += item.price;
+                totalSalePrice += item.priceSale;
+            }
+
+            if (totalPrice !== 0) {
+                // Tính phần trăm giảm
+                totalDiscountPercentage = ((totalPrice - totalSalePrice) / totalPrice) * 100;
+            }
+
+            return Math.floor(totalDiscountPercentage); // Loại bỏ số sau dấu phẩy
+        },
         removeItem(index) {
             this.$store.dispatch('deleteItemFormCart', index);
         },

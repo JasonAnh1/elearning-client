@@ -1,13 +1,13 @@
 <template>
   <div>
-    
+
     <div class="my-learning container-fluid bg-dark " style="height: 350px;">
-      <el-steps :space="200" :active="2" finish-status="success" class="pt-3 ms-5" 
-      v-if="isVerify !== 'VERIFY' && isVerify !== 'DISABLE'" >
-                <el-step title="Done"></el-step>
-                <el-step title="Register"></el-step>
-                <el-step title="Verify">ss</el-step>
-            </el-steps>
+      <el-steps :space="200" :active="2" finish-status="success" class="pt-3 ms-5"
+        v-if="isVerify !== 'VERIFY' && isVerify !== 'DISABLE'">
+        <el-step title="Done"></el-step>
+        <el-step title="Register"></el-step>
+        <el-step title="Verify">ss</el-step>
+      </el-steps>
       <h1 class="t ms-5 pt-5 fw-bold ps-5 text-white">{{ userName }}
 
         <el-tooltip class="item" effect="dark" content="This account has been verified " placement="right-start"
@@ -23,8 +23,12 @@
       <h1 class="btn btn-outline-success  mt-3" style="margin-left:90px ;"
         v-if="isVerify !== 'VERIFY' && isVerify !== 'DISABLE'" data-bs-toggle="modal"
         data-bs-target="#verifyCheckOutModal">Verify account</h1>
+        <div v-else>
       <h1 class="btn btn-outline-primary  mt-3" style="margin-left:90px ;" data-bs-toggle="modal"
-        data-bs-target="#createCourseModal" v-else>Create new course</h1>
+        data-bs-target="#createCourseModal" >Create new course</h1>     
+        <br>
+         <h1 class="btn btn-outline-success  mt-3" style="margin-left:90px ;"  @click="openChat()">Open Chat</h1>
+      </div>
       <div class="modal fade" id="verifyCheckOutModal" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -37,7 +41,7 @@
               <div class="modal-verify-content">
                 <p><em>In order to proceed with the verification process and fully activate your account, it is
                     necessary to make a payment for a verification fee.</em></p>
-                <p><em>This fee is essential to ensure the security and authenticity of your account, as it allows us to
+                <p><em>This fee is es tial to ensure the security and authenticity of your account, as it allows us to
                     verify your identity and validate the information provided during the registration process.</em></p>
                 <p><em>Once the payment is successfully processed, our verification team will promptly review your
                     account and confirm its authenticity, enabling you to access all the features and benefits
@@ -146,6 +150,43 @@
       </div>
     </div>
     <div class="container mt-5 mb-5">
+      <h3 class="fw-bold">Revenue:</h3>
+      <div class="row mt-5">
+            <div class="col-md-6">
+                <table class="table" >
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Reveneu</th>
+                        <th scope="col">Total</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Gross profit</td>
+                        <td>{{ formatCurrency(grossProfit) }}</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>Net profit</td>
+                        <td>{{ formatCurrency(netProfit) }}</td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+            </div>
+           <div class="col-md-6" style="width: 300px;">
+            <Pie :data="chartData"  :options="chartOptions" v-if="loaded"/>
+           </div>
+         
+        </div>
+
+    </div>
+    <div class="container mt-5 mb-5">
       <h3 class="fw-bold">My course:</h3>
       <div class="row row-cols-1 row-cols-md-4 jus">
         <div class="col mt-4" v-for="item in listCourseForAuthor" v-bind:key="item.id">
@@ -153,10 +194,18 @@
 
             <a class="text-decoration-none text-reset" v-on:click="getDetailCourseStudio(item.id)">
               <img :src=item.media.thumbUrl class="card-img-top " alt="...">
+              <span class=" ms-3" style="font-size: 10px;"><i class="fa-solid fa-user text-muted"></i> {{
+          item.learnerNumber }}
+                <el-rate class="ps-3" value="3.3" disabled show-score text-color="#ff9900" score-template="{value}">
+                </el-rate>
+
+              </span>
 
               <div class="card-body">
                 <h5 class="card-title fw-bold">{{ item.title }}</h5>
-                <p class="card-text">{{ item.author.name }}</p>
+                <p class="card-text">{{ item.author.name }}
+
+                </p>
 
               </div>
 
@@ -171,10 +220,25 @@
 </template>
 
 <script>
+import {
+    Chart as ChartJS,
+    Title,
+    ArcElement,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale
+} from 'chart.js'
+import { Pie } from 'vue-chartjs'
+// import { Bar } from 'vue-chartjs'
+import axios from "axios";
+ChartJS.register(CategoryScale, LinearScale, BarElement,ArcElement, Title, Tooltip, Legend)
 import router from '@/router';
 import { VueEditor } from "vue2-editor";
 export default {
   name: 'LectureStudio',
+  
   data() {
     return {
       imageFile: null,
@@ -189,18 +253,48 @@ export default {
       isVerify: localStorage.getItem('active'),
       bankCode: 'NCB',
       payload: {
-                page: 0,
-                status: null,
-                authorName: null,
-                startPrice: 0,
-                endPrice: 0,
-                categoryId: 0,
-                authorId: 0
-            }
+        page: 0,
+        status: null,
+        authorName: null,
+        startPrice: 0,
+        endPrice: 0,
+        categoryId: 0,
+        authorId: 0
+      },
+
+      chartData: {
+        labels: ['Gross profit', 'Net profit'],
+        datasets: [
+          {
+            backgroundColor: ['#41B883', '#E46651'],
+            data: [100, 100]
+          }
+        ]
+      },
+
+      chartOptions: {
+        responsive: true,
+        maintainAspectRatio: false
+      },
+      grossProfit: 0,
+      netProfit: 0,
+
+      selectedYear: 2024,
+      selectedMonth: 1,
+      data: {
+        labels: [],
+        datasets: []
+      },
+      options: {
+        responsive: true
+      },
+
     }
   },
   components: {
-    VueEditor
+    VueEditor,
+    // Bar,
+    Pie
   },
   computed: {
     listCourseCategories() {
@@ -210,14 +304,38 @@ export default {
       return this.$store.state.userLogined;
     },
     listCourseForAuthor() {
-      return this.$store.state.lstCourse; 
+      return this.$store.state.lstCourse;
     }
   },
-  mounted() {
-    this.payload.authorId =  localStorage.getItem("ownerId");
-    this.$store.dispatch('fetchListCourse', this.payload)
+  async mounted() {
+    this.payload.authorId = localStorage.getItem("ownerId");
+    this.$store.dispatch('fetchListCourse', this.payload);
+
+    try {
+            
+            const response = await axios.get("api/v1/lectures-revenue/netProfit", {
+                params: {
+                    year: this.selectedYear
+                },
+                headers: {
+                    Authorization: localStorage.getItem("accessToken"),
+                },
+            })
+
+          
+            this.grossProfit = response.data
+            this.netProfit = this.grossProfit*0.8
+            this.chartData.datasets[0].data = [ this.grossProfit, this.grossProfit*0.8];
+            this.loaded = true
+            console.log(this.chartData)
+        } catch (error) {
+            console.error('Error:', error);
+        }
   },
   methods: {
+    formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        },
     checkOutVerify() {
       if (this.bankCode) {
         let payload = {
@@ -249,6 +367,7 @@ export default {
         password: this.password
       });
     },
+ 
     changePic() {
       this.imageFile = URL.createObjectURL(this.$refs.file.files[0])
     },
@@ -257,7 +376,11 @@ export default {
       router.push({ path: "/DetailCourseStudio", query: { courseId: courseId } });
 
     },
+    openChat(){
 
+      router.push({ path: "/ChatPage"});
+
+    },
     addCourse() {
       var formData = new FormData();
       formData.append('file', this.$refs.file.files[0]);
