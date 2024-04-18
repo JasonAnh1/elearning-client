@@ -17,8 +17,6 @@
       </div>
     </el-carousel-item>
   </el-carousel>
-
-
 </template>
 
 <script>

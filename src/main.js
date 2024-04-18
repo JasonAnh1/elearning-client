@@ -9,11 +9,11 @@ import VueCarousel from 'vue-carousel';
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
-
 Vue.config.productionTip = false
 Vue.use(VueSweetalert2);
 Vue.use(VueCarousel);
 Vue.use(ElementUI);
+
 new Vue({
   
   store,

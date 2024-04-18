@@ -72,7 +72,7 @@
                         <div>
                           <h6 class="fw-bold text-primary mb-1">{{ comment.user.name }}</h6>
                           <p class="text-muted small mb-0">
-                            {{timePassed(comment.updatedAt)  }}
+                            {{timePassed(comment.updatedAt) }}
                           </p>
                         </div>
                       </div>
@@ -86,25 +86,27 @@
                           <i class="far fa-thumbs-up me-2"></i>
                           <p class="mb-0">Like</p>
                         </a>
-                        <a class="d-flex align-items-center me-3 cursor-pointer" data-bs-toggle="modal" :data-bs-target="'#exampleModal'+ comment.id">
+                        <a class="d-flex align-items-center me-3 cursor-pointer" data-bs-toggle="modal"
+                          :data-bs-target="'#exampleModal'+ comment.id">
                           <i class="far fa-comment-dots me-2"></i>
                           <p class="mb-0">Reply</p>
                         </a>
-                        
-                        <div class="modal fade" :id="'exampleModal' + comment.id" tabindex="-1" aria-labelledby="exampleModalLabel"
-                          aria-hidden="true">
+
+                        <div class="modal fade" :id="'exampleModal' + comment.id" tabindex="-1"
+                          aria-labelledby="exampleModalLabel" aria-hidden="true">
                           <div class="modal-dialog">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Reply <span class="fw-bold" >{{comment.user.name  }}</span></h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Reply <span
+                                    class="fw-bold">{{comment.user.name }}</span></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                   aria-label="Close"></button>
                               </div>
                               <div class="modal-body">
                                 <div class="d-flex flex-start w-100">
                                   <img class="rounded-circle shadow-1-strong me-3"
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s" alt="avatar"
-                                    width="40" height="40" />
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s"
+                                    alt="avatar" width="40" height="40" />
                                   <div class="form-outline w-100">
                                     <textarea class="form-control" id="textAreaExample" rows="4"
                                       style="background: #fff;" v-model="replyLessonComment"></textarea>
@@ -115,20 +117,21 @@
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" @click="replyComment(comment)" data-bs-dismiss="modal" >Reply</button>
+                                <button type="button" class="btn btn-primary" @click="replyComment(comment)"
+                                  data-bs-dismiss="modal">Reply</button>
                               </div>
                             </div>
                           </div>
                         </div>
-                        
-                        <a  class="d-flex align-items-center me-3 cursor-pointer"
-                        @click="displayReplyComment(comment)">
+
+                        <a class="d-flex align-items-center me-3 cursor-pointer" @click="displayReplyComment(comment)">
                           <i class="fas fa-share me-2"></i>
                           <p class="mb-0">{{comment.childrenComments.length}} answer</p>
                         </a>
                       </div>
                     </div>
-                    <div  v-for="subComment in comment.childrenComments" v-bind:key="subComment.id" :class="{ 'd-none': comment.hiden }">
+                    <div v-for="subComment in comment.childrenComments" v-bind:key="subComment.id"
+                      :class="{ 'd-none': comment.hiden }">
                       <div class="card-body tier-2 w-75 ms-5">
                         <div class="d-flex flex-start align-items-center">
                           <img class="rounded-circle shadow-1-strong me-3"
@@ -156,40 +159,43 @@
                             <i class="fas fa-share me-2"></i>
                             <p class="mb-0">Share</p>
                           </a>
-                          <a class="d-flex align-items-center me-3" data-bs-toggle="modal" :data-bs-target="'#exampleModal'+ subComment.id">
-                          <i class="far fa-comment-dots me-2"></i>
-                          <p class="mb-0">Reply</p>
-                        </a>
-                        
-                        <div class="modal fade" :id="'exampleModal' + subComment.id" tabindex="-1" aria-labelledby="exampleModalLabel"
-                          aria-hidden="true">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Reply <span class="fw-bold" >{{subComment.user.name  }}</span></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                  aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                                <div class="d-flex flex-start w-100">
-                                  <img class="rounded-circle shadow-1-strong me-3"
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s" alt="avatar"
-                                    width="40" height="40" />
-                                  <div class="form-outline w-100">
-                                    <textarea class="form-control" id="textAreaExample" rows="4"
-                                      style="background: #fff;" v-model="replyLessonComment"></textarea>
+                          <a class="d-flex align-items-center me-3" data-bs-toggle="modal"
+                            :data-bs-target="'#exampleModal'+ subComment.id">
+                            <i class="far fa-comment-dots me-2"></i>
+                            <p class="mb-0">Reply</p>
+                          </a>
 
-                                  </div>
+                          <div class="modal fade" :id="'exampleModal' + subComment.id" tabindex="-1"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Reply <span
+                                      class="fw-bold">{{subComment.user.name }}</span></h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                                 </div>
+                                <div class="modal-body">
+                                  <div class="d-flex flex-start w-100">
+                                    <img class="rounded-circle shadow-1-strong me-3"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s"
+                                      alt="avatar" width="40" height="40" />
+                                    <div class="form-outline w-100">
+                                      <textarea class="form-control" id="textAreaExample" rows="4"
+                                        style="background: #fff;" v-model="replyLessonComment"></textarea>
 
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary"  data-bs-dismiss="modal"  @click="replyComment(subComment)">Reply</button>
+                                    </div>
+                                  </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                                    @click="replyComment(subComment)">Reply</button>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
                         </div>
                       </div>
                     </div>
@@ -281,7 +287,41 @@
             </div>
 
           </div>
-          <el-progress class="ms-3 mt-3" type="dashboard" :percentage="currentPercentage" :color="colors"></el-progress>
+          <el-progress v-if="enrolled === 'true'" class="ms-3 mt-3" type="dashboard" :percentage="currentPercentage"
+            :color="colors"></el-progress>
+          <a class="btn btn-outline-primary mt-2 w-100" data-bs-toggle="modal" data-bs-target="#checkOutModal"
+            v-else>Enroll now</a>
+
+          <!-- check out modal -->
+          <div class="modal fade" id="checkOutModal" tabindex="-1" aria-labelledby="checkOutModal" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-dark" id="checkOutModal">Check out this course</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div v-if="buyAble === true" class="text-dark">Fee: {{formatCurrency( currentCourse.priceSale)  }}</div>
+                  <div class="fw-bold text-dark">Chose bank:</div>
+                  <select id="bankSelect" v-model="bankCode" class="form-select  mb-2 form-control"
+                    aria-label="Default select example">
+                    <option value="NCB" class="text-primary" selected>NATIONAL CITIZEN BANK (NCB)</option>
+                    <option value="VISA" class="text-secondary">VISA CREDIT CARD</option>
+                    <option value="MasterCard" class="text-success">MASTERCARD</option>
+                    <option value="JCB" class="text-success">Japan Credit Bureau</option>
+              
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="checkOut()">Check out</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
         </div>
       </div>
 
@@ -295,16 +335,20 @@ export default {
   name: 'LessonPage',
   data() {
     return {
+      bankCode: 'NCB',
       replyLessonComment:null,
       commentContent: null,
+      buyAble:false,
       sections: null,
       videoCompleted: false,
       courseId: this.$route.query.courseId,
+      enrolled: this.$route.query.enrolled,
       percentage: 0,
       currentPercentage: 0,
       lessonId: this.$route.query.lessonId,
       lessonComment: null,
       role: localStorage.getItem('role'),
+      currentCourse : null,
       colors: [
         { color: '#f56c6c', percentage: 20 },
         { color: '#e6a23c', percentage: 40 },
@@ -321,16 +365,27 @@ export default {
     lesson() {
       return this.$store.state.currentTargetLesson;
     },
+    course(){
+      return this.$store.state.lstCourse;
+    },
+    currentCourseItem() {
+   
+    return this.course.find(course => course.id === this.courseId);
+  }
   },
   async mounted() {
+  
     await this.$store.dispatch('fetchTargetLesson', this.lessonId);
-
-    if (this.lesson.type === 'VIDEO') {
-      this.fetchWatchedPercentage(this.lessonId)
-    } else if (this.lesson.type === 'TEXT' && this.lesson.haveTest === false) {
-      window.addEventListener('scroll', this.handleScroll);
+    // neu da enroll thi moi tai data 
+    if (this.enrolled === 'true') {
+      if (this.lesson.type === 'VIDEO') {
+        this.fetchWatchedPercentage(this.lessonId)
+      } else if (this.lesson.type === 'TEXT' && this.lesson.haveTest === false) {
+        window.addEventListener('scroll', this.handleScroll);
+      }
     }
 
+  
     const listLessonComment = await axios.get("api/v1/list-lesson-comment", {
       params: { request: this.lessonId },
       headers: {
@@ -340,13 +395,48 @@ export default {
 
     this.lessonComment = listLessonComment.data
 
+    // lay course cua lesson hien tai
     this.fetchLearningLesson()
+    const response =  await axios.get("api/v1/publish/get-course", {
+        params: { courseId: this.courseId },
+      });
+      this.currentCourse = response.data
+      this.buyAble = true;
 
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
+    formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        },
+    checkOut()
+    {
+      if (this.bankCode && this.buyAble === true) {
+        let payload = {
+          bankCode: this.bankCode,
+          total: this.currentCourse.priceSale
+        }
+        let transactionObj = new Object();
+        transactionObj.type = 'checkout'
+        transactionObj.amount = this.currentCourse.priceSale;
+        transactionObj.items = [{
+          id:this.currentCourse.id,
+          type:'COURSE'
+        }]
+        localStorage.setItem('transactionObj', JSON.stringify(transactionObj));
+        this.$store.dispatch('goPaidPage', payload);
+      } else {
+        this.$swal.fire({
+          icon: 'error',
+          title: 'Oh no',
+          text: 'Some thing wrong!',
+          footer: '<a href="">Go to cart?</a>'
+        });
+      }
+
+    },
     handleScroll() {
       // Lấy vị trí hiện tại của thanh cuộn
       let scrollPosition = window.scrollY;
@@ -429,7 +519,7 @@ export default {
     },
     goToLesson(lessonId) {
 
-      this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId, courseId: this.courseId } })
+      this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId, courseId: this.courseId,enrolled: this.enrolled } })
       location.reload();
 
     },

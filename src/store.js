@@ -122,8 +122,6 @@ export const store = new Vuex.Store({
       });
       console.log(response.data);
       localStorage.setItem("transactionObj", null);
-      console.log(JSON.parse(localStorage.getItem("transactionObj")));
-      // window.open(response.data.body.URL)
     },
     async goPaidPage(context, payload) {
       const response = await axios.get("api/v1/publish/pay2", {

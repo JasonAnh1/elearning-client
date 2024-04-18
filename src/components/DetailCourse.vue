@@ -471,19 +471,21 @@ export default {
     this.courseComments = listCourseComment.data
     this.totalRate 
   
-
+    // tinh rate cua khoa hoc
     let sumRate = 0;
     for (let i = 0; i < this.courseComments.length; i++) {
       sumRate += this.courseComments[i].rate;
     }
 
     this.totalRate = sumRate / this.courseComments.length;
-    // console.log(this.courseComments )
+    // lay ra comment duoc nhieu like nhat
     let mostlikeCommentRes = await axios.get("api/v1/publish/list-most-like-comment",{
       params: { request: this.courseId },
-
     });
     this.mostLikedComment = mostlikeCommentRes.data;
+
+
+
   },
 
   methods: {
@@ -590,7 +592,7 @@ export default {
       return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     },
     goToLesson(lessonId) {
-      this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId, courseId: this.courseId } })
+      this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId, courseId: this.courseId,enrolled:  this.currentCourse.isEnrolled } })
     },
     timePassed(createdAt) {
       // Thời điểm đã lưu

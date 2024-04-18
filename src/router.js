@@ -17,6 +17,7 @@ import DetailCourse from "./components/DetailCourse.vue"
 import LessonStudio from "./components/admin/LessonStudio.vue"
 import ChatPage from "./components/chat/ChatPage.vue"
 import LearnerChatPage from "./components/chat/LearnerChatPage.vue"
+import ViewBook from "@/components/book/ViewBook";
 Vue.use(Router)
 
 export default new Router({ 
@@ -37,6 +38,7 @@ export default new Router({
         { path: '/DetailCourse', component: DetailCourse},
         { path: '/LessonStudio', component: LessonStudio},
         { path: '/ChatPage', component: ChatPage},
-        { path: '/LearnerChatPage', component: LearnerChatPage}
+        { path: '/LearnerChatPage', component: LearnerChatPage},
+        { path: '/ViewBook', component: ViewBook}
     ]
 })
