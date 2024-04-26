@@ -15,8 +15,78 @@
                 role="button" rel="nofollow" target="_blank">Learner</a>
               <a class="btn btn-outline-primary btn-lg m-2" target="_blank" role="button"
                 v-on:click="goLecturePage()">Lecturers</a>
+                <br>
+                <a class="btn btn-outline-primary btn-lg m-2"  role="button"
+                data-bs-toggle="modal" data-bs-target="#organizationModel">Organization</a>
+               <div class="modal fade" id="organizationModel" tabindex="-1" aria-labelledby="organizationSignUpModal"
+                aria-hidden="false">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header bg-purple text-white">
+                      <h5 class="modal-title text-dark" id="organizationModel">Organization sign up</h5>
+                    </div>
+                    <div class="modal-body">
+                      <p>Discover all content of online education. Get instant access to all free content now.</p>
+                      <form @submit.prevent="orgSignUp">
+                        <div class="mb-3">
+                          <input type="email" class="form-control" placeholder="Email" v-model="orgEmail">
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" placeholder="Name" v-model="orgName">
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" placeholder="Phone" v-model="orgPhone">
+                        </div>
+                        <div class="mb-3">
+                          <input type="password" class="form-control" placeholder="Password" v-model="orgPassword">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" data-bs-dismiss="modal">Sign up</button>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <p>By signing up, you agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy
+                          Policy</a>.
+                      </p>
+                      <p>Already have account? <a href="#"  data-bs-dismiss="modal"
+                        data-bs-toggle="modal" data-bs-target="#organizationModelSignIn"
+                        >Sign Up</a></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+          <div class="modal fade" id="organizationModelSignIn" tabindex="-1" aria-labelledby="organizationSignUpModal"
+                aria-hidden="false">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header bg-purple text-white">
+                      <h5 class="modal-title text-dark" id="organizationModelSignIn">Organization sign in</h5>
+                    </div>
+                    <div class="modal-body">
+                      <p>Discover all content of online education. Get instant access to all free content now.</p>
+                      <form @submit.prevent="orgSignIn">
+   
+                        <div class="mb-3">
+                          <input type="text" class="form-control" placeholder="Phone" v-model="orgPhone">
+                        </div>
+                        <div class="mb-3">
+                          <input type="password" class="form-control" placeholder="Password" v-model="orgPassword">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" data-bs-dismiss="modal">Log in</button>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <p>By signing up, you agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy
+                          Policy</a>.
+                      </p>
+                      <p>Already have account? <a href="#"  data-bs-dismiss="modal">Sign Up</a></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
         </div>
       </div>
     </div>
@@ -439,6 +509,10 @@ import BookCarousel from "@/components/book/BookCarousel";
 export default {
   data() {
     return {
+      orgEmail: null,
+      orgName: null,
+      orgPassword: null,
+      orgPhone: null,
       perPage: 4,
       payload: {
         page: 0,
@@ -448,6 +522,7 @@ export default {
         endPrice: 0,
         categoryId: 0,
         authorId: 0
+
       }
     }
   },
@@ -474,6 +549,14 @@ export default {
     window.addEventListener('resize', this.checkScreenSize);
   },
   methods: {
+    orgSignUp(){
+      let user = new Object();
+      user.email = this.orgEmail;
+      user.name = this.orgName;
+      user.password = this.orgPassword;
+      user.phone = this.orgPhone;
+      this.$store.dispatch('orgSignUp',user)
+    },
     formatCurrency(amount) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
         },

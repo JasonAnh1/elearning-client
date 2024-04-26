@@ -57,7 +57,10 @@ export default {
             transactionObj.transCode = this.invoiceCode;
             if (transactionObj.type === 'verify') {
                 this.$store.dispatch('submitVerifyPaymentSuccess', transactionObj);
-            } else {
+            }else if(transactionObj.type === 'plan'){
+                this.$store.dispatch('submitPlanPaymentSuccess', transactionObj);
+            } 
+             else {
                 this.$store.dispatch('submitPaymentSuccess', transactionObj);
             }
 

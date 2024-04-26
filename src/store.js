@@ -12,7 +12,7 @@ export const store = new Vuex.Store({
       accessToken: "",
       name: "",
       imageUrl: "",
-      active:"",
+      active: "",
       roles: [
         {
           name: "",
@@ -31,6 +31,7 @@ export const store = new Vuex.Store({
     cart: [],
     listCourseForLearner: [],
     totalCartMoney: 0,
+    eventSource: null,
   },
   getters: {},
   mutations: {
@@ -52,7 +53,16 @@ export const store = new Vuex.Store({
       localStorage.setItem("ownerId", state.userLogined.id);
       localStorage.setItem("active", state.userLogined.active);
     },
-
+    setEventSource(state, eventSource) {
+      state.eventSource = eventSource;
+    },
+    // Mutation để đóng kết nối SSE
+    closeEventSource(state) {
+      if (state.eventSource) {
+        state.eventSource.close();
+      }
+      state.eventSource = null;
+    },
     register(state, userRegisted) {
       state.userLogined = userRegisted;
       const accessToken = "Barear " + state.userLogined.accessToken;
@@ -63,7 +73,7 @@ export const store = new Vuex.Store({
     getListCourseCategory(state, courseCategories) {
       state.lstCourseCategory = courseCategories;
     },
-    getListCourseForLearner(state,courses){
+    getListCourseForLearner(state, courses) {
       state.listCourseForLearner = courses;
     },
     getListCourseForLecture(state, courses) {
@@ -90,7 +100,7 @@ export const store = new Vuex.Store({
       localStorage.removeItem("username");
       localStorage.removeItem("userimg");
       localStorage.removeItem("ownerId");
-      localStorage.removeItem("role")
+      localStorage.removeItem("role");
       setTimeout(location.reload.bind(location), 90);
       router.push({ path: "/" }).catch(() => {});
     },
@@ -113,6 +123,16 @@ export const store = new Vuex.Store({
       console.log(response.data);
       localStorage.removeItem("transactionObj");
       context.commit("loginServer", response.data);
+    },
+    async submitPlanPaymentSuccess(context, payload) {
+      const response = await axios.get("api/v1/create-plan", {
+        params: { type: payload.plan },
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
+      console.log(response.data);
+      localStorage.removeItem("transactionObj");
     },
     async submitPaymentSuccess(context, payload) {
       const response = await axios.post("api/v1/content-payment", payload, {
@@ -143,6 +163,8 @@ export const store = new Vuex.Store({
     },
     logOut(context) {
       context.commit("removeUser");
+      context.commit('closeEventSource');
+
     },
     async fetchTargetLesson(context, id) {
       const response = await axios.get("api/v1/publish/get-lesson", {
@@ -152,7 +174,6 @@ export const store = new Vuex.Store({
       context.commit("getCurrentTargetLesson", response.data);
     },
     async lectureSignUp(context, payload) {
-
       const response = await axios
         .post("api/v1/auth/signupaslecture", payload)
         .catch((error) => console.log(error));
@@ -160,16 +181,20 @@ export const store = new Vuex.Store({
         context.commit("loginServer", response.data.body);
         router.push({ path: "/LectureStudio" }).catch(() => {});
       }
-
-      
     },
     async learnerSignUp(context, payload) {
-        const response = await axios.post("api/v1/auth/signupAsLearner", payload);
-        context.commit("loginServer", response.data.body);
-        router.push({ path: "/LearnerPage" }).catch(() => {});
-     
+      const response = await axios.post("api/v1/auth/signupAsLearner", payload);
+      context.commit("loginServer", response.data.body);
+      router.push({ path: "/LearnerPage" }).catch(() => {});
     },
-    
+    async orgSignUp(context, payload) {
+      const response = await axios.post(
+        "api/v1/auth/signupAsOrganization",
+        payload
+      );
+      context.commit("loginServer", response.data.body);
+      // router.push({ path: "/LearnerPage" }).catch(() => {});
+    },
     async fetchLogin(context, phone, password) {
       const response = await axios
         .post("api/v1/auth/signin", phone, password)
@@ -177,6 +202,15 @@ export const store = new Vuex.Store({
       if (response !== undefined) {
         console.log(response.data);
         context.commit("loginServer", response.data);
+        const eventSource = new EventSource(
+          `http://localhost:8080/api/sse/${response.data.id}`
+        );
+        context.commit("setEventSource", eventSource);
+        eventSource.onmessage = (event) => {
+          console.log("Received notification:", event.data);
+          // Hiển thị thông báo hoặc xử lý sự kiện theo yêu cầu
+          // Ví dụ: dispatch('showNotification', event.data);
+        };
         if (response.data.roles[0].name == "ROLE_LECTURE") {
           router.push({ path: "/LectureStudio" }).catch(() => {});
         } else if (response.data.roles[0].name == "ROLE_LEARNER") {
@@ -211,9 +245,7 @@ export const store = new Vuex.Store({
       });
     },
     async fetchUpdateLesson(context, payload) {
-
-      if (payload.media != undefined ) {
-      
+      if (payload.media != undefined) {
         const responseMedia = await axios.post(
           "api/v1/file/upload-video",
           payload.media,
@@ -257,7 +289,7 @@ export const store = new Vuex.Store({
           router.go();
         });
     },
-  
+
     async fetchUpdateCourse(context, payload) {
       if (payload.img) {
         const responseImg = await axios.post(
@@ -350,7 +382,7 @@ export const store = new Vuex.Store({
       context.commit("getListCourseForLecture", response.data.body);
     },
     async fetchListCourseForLearner(context) {
-      const response = await axios.get("api/v1/list-course-enrolled",{
+      const response = await axios.get("api/v1/list-course-enrolled", {
         headers: {
           Authorization: localStorage.getItem("accessToken"),
         },
@@ -368,20 +400,22 @@ export const store = new Vuex.Store({
 
     async fetchListCourse(context, payload) {
       const response = await axios.get("api/v1/publish/list-course", {
-        params: { page: payload.page,
+        params: {
+          page: payload.page,
           status: payload.status,
           startPrice: payload.startPrice,
           endPrice: payload.endPrice,
           authorId: payload.authorId,
           authorName: payload.authorName,
-          categoryId: payload.categoryId},
+          categoryId: payload.categoryId,
+        },
 
-          headers: {
-            Authorization: localStorage.getItem("accessToken"),
-          },},);
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
 
       context.commit("getListCourse", response.data.body);
     },
-     
   },
 });

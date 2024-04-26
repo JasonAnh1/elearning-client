@@ -18,6 +18,8 @@ import LessonStudio from "./components/admin/LessonStudio.vue"
 import ChatPage from "./components/chat/ChatPage.vue"
 import LearnerChatPage from "./components/chat/LearnerChatPage.vue"
 import ViewBook from "@/components/book/ViewBook";
+import OrganizationPage from "@/components/organization/OrganizationPage";
+import OrgManagerment from "./components/admin/OrgManagerment.vue"
 Vue.use(Router)
 
 export default new Router({ 
@@ -39,6 +41,8 @@ export default new Router({
         { path: '/LessonStudio', component: LessonStudio},
         { path: '/ChatPage', component: ChatPage},
         { path: '/LearnerChatPage', component: LearnerChatPage},
-        { path: '/ViewBook', component: ViewBook}
+        { path: '/ViewBook', component: ViewBook},
+        { path: '/OrganizationPage', component: OrganizationPage},
+        { path: '/OrgManagerment', component: OrgManagerment}
     ]
 })

@@ -42,7 +42,10 @@
                             <span slot="title">Revenue</span>
                         </el-menu-item>
 
-
+                        <el-menu-item index="2" @click="goOrg()">
+                            <i class="fa-solid fa-sitemap"></i>
+                            <span slot="title">Organization</span>
+                        </el-menu-item>
                         <el-submenu index="3">
 
                             <template slot="title">
@@ -152,6 +155,9 @@ export default {
         },
         goChart() {
             this.$router.push({ path: "/RevenueChart" })
+        },
+        goOrg(){
+            this.$router.push({path: "/OrgManagerment" })
         }
     },
 
