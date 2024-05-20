@@ -23,11 +23,13 @@
       <h1 class="btn btn-outline-success  mt-3" style="margin-left:90px ;"
         v-if="isVerify !== 'VERIFY' && isVerify !== 'DISABLE'" data-bs-toggle="modal"
         data-bs-target="#verifyCheckOutModal">Verify account</h1>
-        <div v-else>
-      <h1 class="btn btn-outline-primary  mt-3" style="margin-left:90px ;" data-bs-toggle="modal"
-        data-bs-target="#createCourseModal" >Create new course</h1>     
+      <div v-else>
+        <h1 class="btn btn-outline-primary  mt-3" style="margin-left:90px ;" data-bs-toggle="modal"
+          data-bs-target="#createCourseModal">Create new course</h1>
+        <h1 class="btn btn-outline-primary  mt-3" style="margin-left:20px ;" data-bs-toggle="modal"
+          data-bs-target="#createBookModal">Create new book</h1>
         <br>
-         <h1 class="btn btn-outline-success  mt-3" style="margin-left:90px ;"  @click="openChat()">Open Chat</h1>
+        <h1 class="btn btn-outline-success  mt-3" style="margin-left:90px ;" @click="openChat()">Open Chat</h1>
       </div>
       <div class="modal fade" id="verifyCheckOutModal" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -148,42 +150,94 @@
           </div>
         </div>
       </div>
+      <div class="modal fade" id="createBookModal" tabindex="-1" aria-labelledby="createCourseModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="createBookModal">Create book</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form class="row g-3">
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label">Category</label>
+                  <select v-model="bCategoryId" class="form-select" aria-label="Default select example">
+                    <option :value="item.id" v-for="item in listBookCategories" v-bind:key="item.id">{{ item.title }}
+                    </option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label">Title</label>
+                  <input type="text" class="form-control" id="exampleFormControlInput1" ref="bTitle">
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+                  <VueEditor class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="bDescription">
+                  </VueEditor>
+                </div>
+
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label">Price</label>
+                  <input type="number" class="form-control" id="exampleFormControlInput1" ref="bPrice">
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label">PriceSale</label>
+                  <input type="number" class="form-control" id="exampleFormControlInput1" ref="bPriceSale">
+                </div>
+                <div class="input-group mb-3">
+                  <input type="file" class="form-control w-100" id="inputGroupFile02" ref="bookFile">
+                </div>
+                <div class="input-group mb-3">
+                  <input v-on:change="changePicBook()" type="file" class="form-control w-100" id="inputGroupFile02"
+                    accept="image/*" ref="bookAvatar">
+
+                  <img :src=imageFile class="img-thumbnail mt-3" alt="..." style="width: 120px;height: 67px;">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" v-on:click="addBook()">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="container mt-5 mb-5">
       <h3 class="fw-bold">Revenue:</h3>
       <div class="row mt-5">
-            <div class="col-md-6">
-                <table class="table" >
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Reveneu</th>
-                        <th scope="col">Total</th>
+        <div class="col-md-6">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Reveneu</th>
+                <th scope="col">Total</th>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Gross profit</td>
-                        <td>{{ formatCurrency(grossProfit) }}</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Gross profit</td>
+                <td>{{ formatCurrency(grossProfit) }}</td>
 
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Net profit</td>
-                        <td>{{ formatCurrency(netProfit) }}</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Net profit</td>
+                <td>{{ formatCurrency(netProfit) }}</td>
 
-                    </tr>
+              </tr>
 
-                </tbody>
-            </table>
-            </div>
-           <div class="col-md-6" style="width: 300px;">
-            <Pie :data="chartData"  :options="chartOptions" v-if="loaded"/>
-           </div>
-         
+            </tbody>
+          </table>
         </div>
+        <div class="col-md-6" style="width: 300px;">
+          <Pie :data="chartData" :options="chartOptions" v-if="loaded" />
+        </div>
+
+      </div>
 
     </div>
     <div class="container mt-5 mb-5">
@@ -195,7 +249,7 @@
             <a class="text-decoration-none text-reset" v-on:click="getDetailCourseStudio(item.id)">
               <img :src=item.media.thumbUrl class="card-img-top " alt="...">
               <span class=" ms-3" style="font-size: 10px;"><i class="fa-solid fa-user text-muted"></i> {{
-          item.learnerNumber }}
+                item.learnerNumber }}
                 <el-rate class="ps-3" value="3.3" disabled show-score text-color="#ff9900" score-template="{value}">
                 </el-rate>
 
@@ -216,38 +270,46 @@
 
       </div>
     </div>
+    <BookLecture></BookLecture>
   </div>
 </template>
 
 <script>
 import {
-    Chart as ChartJS,
-    Title,
-    ArcElement,
-    Tooltip,
-    Legend,
-    BarElement,
-    CategoryScale,
-    LinearScale
+  Chart as ChartJS,
+  Title,
+  ArcElement,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
 } from 'chart.js'
 import { Pie } from 'vue-chartjs'
 // import { Bar } from 'vue-chartjs'
 import axios from "axios";
-ChartJS.register(CategoryScale, LinearScale, BarElement,ArcElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend)
 import router from '@/router';
 import { VueEditor } from "vue2-editor";
+import BookLecture from "@/components/book/BookLecture";
 export default {
   name: 'LectureStudio',
-  
+
   data() {
     return {
+      ready: false,
+      bookFile: null,
       imageFile: null,
       cLevel: null,
+      bDescription: null,
       cDescription: null,
       course: new Object(),
+      book: new Object,
+      books: [],
       cContent: null,
       cDetail: null,
       cCategoryId: 0,
+      bCategoryId: 0,
       cRequirement: null,
       userName: localStorage.getItem('username'),
       isVerify: localStorage.getItem('active'),
@@ -293,49 +355,59 @@ export default {
   },
   components: {
     VueEditor,
-    // Bar,
+    BookLecture,
     Pie
   },
   computed: {
     listCourseCategories() {
       return this.$store.state.lstCourseCategory;
     },
+    listBookCategories() {
+      return this.$store.state.lstCourseCategory.filter(item => item.type === 'BOOK');
+    },
     userLogined() {
       return this.$store.state.userLogined;
     },
     listCourseForAuthor() {
+      return this.$store.state.lstCourse;
+    },
+    listBooksForAuthor() {
       return this.$store.state.lstCourse;
     }
   },
   async mounted() {
     this.payload.authorId = localStorage.getItem("ownerId");
     this.$store.dispatch('fetchListCourse', this.payload);
-
+    const response = await axios.get("api/v1/publish/get-books", {
+      params: { page: 0, authorId: localStorage.getItem('ownerId'), categoryId: 0, startPrice: 0, endPrice: 0 },
+    });
+    this.books = response.data;
+    console.log(this.books)
     try {
-            
-            const response = await axios.get("api/v1/lectures-revenue/netProfit", {
-                params: {
-                    year: this.selectedYear
-                },
-                headers: {
-                    Authorization: localStorage.getItem("accessToken"),
-                },
-            })
 
-          
-            this.grossProfit = response.data
-            this.netProfit = this.grossProfit*0.8
-            this.chartData.datasets[0].data = [ this.grossProfit, this.grossProfit*0.8];
-            this.loaded = true
-            console.log(this.chartData)
-        } catch (error) {
-            console.error('Error:', error);
-        }
+      const response = await axios.get("api/v1/lectures-revenue/netProfit", {
+        params: {
+          year: this.selectedYear
+        },
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      })
+
+
+      this.grossProfit = response.data
+      this.netProfit = this.grossProfit * 0.8
+      this.chartData.datasets[0].data = [this.grossProfit, this.grossProfit * 0.8];
+      this.loaded = true
+      console.log(this.chartData)
+    } catch (error) {
+      console.error('Error:', error);
+    }
   },
   methods: {
     formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-        },
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    },
     checkOutVerify() {
       if (this.bankCode) {
         let payload = {
@@ -367,19 +439,37 @@ export default {
         password: this.password
       });
     },
- 
+
     changePic() {
       this.imageFile = URL.createObjectURL(this.$refs.file.files[0])
+    },
+    changePicBook() {
+      this.imageFile = URL.createObjectURL(this.$refs.bookAvatar.files[0])
     },
     getDetailCourseStudio(courseId) {
 
       router.push({ path: "/DetailCourseStudio", query: { courseId: courseId } });
 
     },
-    openChat(){
+    openChat() {
 
-      router.push({ path: "/ChatPage"});
+      router.push({ path: "/ChatPage" });
 
+    },
+    addBook() {
+      var formData = new FormData();
+      formData.append('file', this.$refs.bookAvatar.files[0]);
+      var formData2 = new FormData();
+      formData2.append('file', this.$refs.bookFile.files[0]);
+      this.book = new Object({
+        title: this.$refs.bTitle.value,
+        categoryId: this.bCategoryId,
+        price: this.$refs.bPrice.value,
+        priceSale: this.$refs.bPriceSale.value,
+        description: this.bDescription
+      })
+
+      this.$store.dispatch('fetchAddBook', { 'avatar': formData, 'book': formData2, 'request': this.book });
     },
     addCourse() {
       var formData = new FormData();
@@ -406,17 +496,23 @@ export default {
 }
 </script>
 <style scoped>
+.card {
+  transition: .3s transform cubic-bezier(.155, 1.105, .295, 1.12), .3s box-shadow, .3s -webkit-transform cubic-bezier(.155, 1.105, .295, 1.12);
+  cursor: pointer;
+}
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
+}
 .modal-verify-content {
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
 }
-
 .modal-verify-content p {
   margin-bottom: 10px;
 }
-
 .modal-verify-content em {
   font-style: italic;
   color: #333;

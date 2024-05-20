@@ -100,7 +100,8 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary" @click="planPayment()">Save changes</button>
+								<button type="button" class="btn btn-primary" @click="planPayment()">Save
+									changes</button>
 							</div>
 						</div>
 					</div>
@@ -160,13 +161,11 @@
 
 export default {
 	name: 'PricingTable',
-	props: {
-		msg: String
-	},
+	props: ['currentPlan'],
 	data() {
 		return {
-			plan:'',
-			bankCode: 'NCB',
+			plan: '',
+			bankCode: 'NCB'
 		}
 	},
 
@@ -175,22 +174,34 @@ export default {
 	},
 	mounted() {
 
-
 	},
 	methods: {
 		planPayment() {
+			console.log('sadsa')
 			let cost = 0
-			if (this.plan === 'STARTER'){
+			if (this.plan === 'STARTER') {
+				if (this.currentPlan.type === 'STARTER' || this.currentPlan.type === 'POPULAR' || this.currentPlan.type === 'ADVANCE') {
+					this.$message.error('Oops, You already have this plan.');
+					return;
+				}
 				cost = 2500000
-			}else if(this.plan === 'POPULAR'){
+			} else if (this.plan === 'POPULAR') {
+				if (this.currentPlan.type === 'POPULAR' || this.currentPlan.type === 'ADVANCE') {
+					this.$message.error('Oops, You already have this plan.');
+					return;
+				}
 				cost = 4000000
-			}else {
+			} else {
+				if (this.currentPlan.type === 'ADVANCE') {
+					this.$message.error('Oops, You already have this plan.');
+					return;
+				}
 				cost = 10000000
 			}
-				let payload = {
-					bankCode: this.bankCode,
-					total: cost
-				}
+			let payload = {
+				bankCode: this.bankCode,
+				total: cost
+			}
 			let transactionObj = new Object();
 			transactionObj.type = 'plan'
 			transactionObj.amount = cost;

@@ -592,7 +592,10 @@ export default {
       return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     },
     goToLesson(lessonId) {
-      this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId, courseId: this.courseId,enrolled:  this.currentCourse.isEnrolled } })
+      this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId ,
+        courseId: this.courseId, 
+        enrolled:  this.currentCourse.isEnrolled,
+        org: this.$route.query.org } })
     },
     timePassed(createdAt) {
       // Thời điểm đã lưu

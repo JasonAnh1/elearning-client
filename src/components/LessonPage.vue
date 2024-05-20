@@ -335,6 +335,7 @@ export default {
   name: 'LessonPage',
   data() {
     return {
+      organization: localStorage.getItem('role'),
       bankCode: 'NCB',
       replyLessonComment:null,
       commentContent: null,
@@ -343,6 +344,7 @@ export default {
       videoCompleted: false,
       courseId: this.$route.query.courseId,
       enrolled: this.$route.query.enrolled,
+      org: this.$route.query.org,
       percentage: 0,
       currentPercentage: 0,
       lessonId: this.$route.query.lessonId,
@@ -377,7 +379,7 @@ export default {
   
     await this.$store.dispatch('fetchTargetLesson', this.lessonId);
     // neu da enroll thi moi tai data 
-    if (this.enrolled === 'true') {
+    if (this.enrolled === 'true' || this.org === 'true') {
       if (this.lesson.type === 'VIDEO') {
         this.fetchWatchedPercentage(this.lessonId)
       } else if (this.lesson.type === 'TEXT' && this.lesson.haveTest === false) {
@@ -441,8 +443,7 @@ export default {
       // Lấy vị trí hiện tại của thanh cuộn
       let scrollPosition = window.scrollY;
 
-
-      // Kiểm tra nếu thanh cuộn đã đến đoạn nhất định (ví dụ: 500px)
+      // Kiểm tra nếu thanh cuộn đã đến đoạn nhất định 
       if (scrollPosition >= (document.body.clientHeight - window.innerHeight - 1080)) {
 
         this.triggerFunction();
@@ -519,7 +520,11 @@ export default {
     },
     goToLesson(lessonId) {
 
-      this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId, courseId: this.courseId,enrolled: this.enrolled } })
+      this.$router.push({ path: "/LessonPage", query: { 
+        lessonId: lessonId,
+        courseId: this.courseId,
+        enrolled: this.enrolled,
+        org: this.org } })
       location.reload();
 
     },

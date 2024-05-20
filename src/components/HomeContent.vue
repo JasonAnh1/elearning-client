@@ -588,7 +588,7 @@ export default {
 
       // let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
       // let itemExists = cartItems.some(cartItem => cartItem.id === item.id);
-      let itemExists = this.cartItems.some(cartItem => cartItem.id === item.id);
+      let itemExists = this.cartItems.some(cartItem => cartItem.id === item.id && cartItem.type === item.type);
       if (itemExists) {
         // Nếu mục đã tồn tại trong giỏ hàng, hiển thị thông báo và không thực hiện thêm vào giỏ hàng
         this.$swal.fire({

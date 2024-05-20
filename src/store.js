@@ -52,6 +52,8 @@ export const store = new Vuex.Store({
       localStorage.setItem("userimg", state.userLogined.imageUrl);
       localStorage.setItem("ownerId", state.userLogined.id);
       localStorage.setItem("active", state.userLogined.active);
+      localStorage.setItem("organizationName",state.userLogined.organization.name);
+      localStorage.setItem("organizationId",state.userLogined.organization.id);
     },
     setEventSource(state, eventSource) {
       state.eventSource = eventSource;
@@ -101,6 +103,9 @@ export const store = new Vuex.Store({
       localStorage.removeItem("userimg");
       localStorage.removeItem("ownerId");
       localStorage.removeItem("role");
+      localStorage.removeItem("active");
+      localStorage.removeItem("organizationName");
+      localStorage.removeItem("organizationId");
       setTimeout(location.reload.bind(location), 90);
       router.push({ path: "/" }).catch(() => {});
     },
@@ -164,7 +169,6 @@ export const store = new Vuex.Store({
     logOut(context) {
       context.commit("removeUser");
       context.commit('closeEventSource');
-
     },
     async fetchTargetLesson(context, id) {
       const response = await axios.get("api/v1/publish/get-lesson", {
@@ -265,6 +269,44 @@ export const store = new Vuex.Store({
         },
       });
     },
+    async fetchAddBook(context, payload) {
+      const responseAvatar = await axios.post(
+        "api/v1/file/upload-image",
+        payload.avatar,
+        {
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      payload.request.avatarId = responseAvatar.data.body.id;
+
+      const responseBook = await axios.post(
+        "api/v1/file/upload-file",
+        payload.book,
+        {
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      payload.request.mediaId = responseBook.data.body.id;
+
+      
+      await axios.post("api/v1/create-book", payload.request, {
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
+      router
+        .push({ path: "/LectureStudio" })
+        .catch(() => {})
+        .then(() => {
+          router.go();
+        });
+    },
     async fetchAddCourse(context, payload) {
       const responseImg = await axios.post(
         "api/v1/file/upload-image",
@@ -350,6 +392,7 @@ export const store = new Vuex.Store({
       const response = await axios.get("api/v1/publish/list-course-categories");
       context.commit("getListCourseCategory", response.data);
     },
+    
     async fetchCourse(context, courseId) {
       const response = await axios.get("api/v1/publish/get-course", {
         params: { courseId: courseId },

@@ -13,9 +13,38 @@
                     <h1 class="mt-4">Cart</h1>
                     <p class="text-muted">{{ cartItems.length }} items in cart</p>
                     <div class="card mb-3" v-for="(item, index) in cartItems" :key="index">
-                        <div class="row g-0">
+                        <div class="row g-0" v-if="item.type === 'COURSE'">
                             <div class="col-md-4">
                                 <img :src=item.media.thumbUrl class="img-fluid rounded-start" alt="React Ultimate">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ item.title }}
+                                    </h5>
+                                    <p class="card-text">{{ item.author.name }}</p>
+                                    <div class="d-flex align-items-center">
+                                        <div class="rating">
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        </div>
+                                        <span class="badge bg-secondary ms-2">5.0 (242 xếp hạng)</span>
+                                    </div>
+                                    <p class="card-text"><small class="text-muted">1 khóa đào tạo miễn phí</small></p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="card-text fw-bold">₫ {{ item.priceSale }}</p>
+                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="Delete" v-on:click="removeItem(index)"><i
+                                                class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-0" v-else>
+                            <div class="col-md-4">
+                                <img :src=item.avatar.thumbUrl class="img-fluid rounded-start" alt="React Ultimate">
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body">

@@ -169,7 +169,7 @@
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
                 <li v-for="item in listCourseCategories" v-bind:key="item.id"><a class="dropdown-item" href="#">{{
-          item.title }}</a></li>
+                  item.title }}</a></li>
 
               </ul>
             </li>
@@ -190,10 +190,30 @@
               </a>
               <ul class="dropdown-menu pb-0" aria-labelledby="navbarDropdown" style="width: 500px;">
                 <a href="#" class="text-decoration-none text-dark" v-for="item in cartItems" v-bind:key="item.id">
-                  <div class="card border-0 shadow-sm">
+                  <div class="card border-0 shadow-sm mt-1" v-if="item.type === 'COURSE'">
                     <div class="row g-0">
                       <div class=" col-lg-4">
                         <img :src=item.media.thumbUrl class="card-img-top
+                          h-100" alt="...">
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card-body">
+                          <h5 class="card-title fw-bold" style="font-size: 14px;">
+                            {{ item.title }}
+                          </h5>
+                          <span>
+                            <p class="card-text fw-bold text-muted" style="font-size: 12px;">đ {{ item.priceSale }}</p>
+                          </span>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card border-0 shadow-sm mt-1" v-if="item.type === 'BOOK'">
+                    <div class="row g-0">
+                      <div class=" col-lg-4">
+                        <img :src=item.avatar.thumbUrl class="card-img-top
                           h-100" alt="...">
                       </div>
                       <div class="col-md-8">
@@ -217,14 +237,15 @@
               </ul>
             </li>
             <li class="nav-item" v-if="role === 'ROLE_LECTURE'">
-
-<a class="nav-link" style="font-size: 14px;" @click="goLecturePage()">Lecture Studio</a>
-</li>
-<li class="nav-item" v-if="role === 'ROLE_LEARNER'">
-
-<a class="nav-link pointer-cusor" style="font-size: 14px;" @click="goLearnerPage()">Learner Hub</a>
-</li>
-            
+              <a class="nav-link" style="font-size: 14px;" @click="goLecturePage()">Lecture Studio</a>
+            </li>
+            <li class="nav-item" v-if="role === 'ROLE_LEARNER'">
+              <a class="nav-link pointer-cusor" style="font-size: 14px;" @click="goLearnerPage()">Learner Hub</a>
+            </li>
+            <li class="nav-item" v-if="role === 'ROLE_ORGANIZATION'">
+              <a class="nav-link pointer-cusor" style="font-size: 14px;" @click="goOrganizationPage()">Organization
+                Hub</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#signupModal"
                 style="font-size: 14px;">Teach on
@@ -259,7 +280,8 @@
                           <label class="form-check-label" for="newsletterCheckbox">I want to receive emails with insider
                             tips, motivation, special updates, and promotions reserved for instructors.</label>
                         </div>
-                        <button  class="btn btn-primary" @click="lectureSignUp()" data-bs-dismiss="modal">Sign up</button>
+                        <button class="btn btn-primary" @click="lectureSignUp()" data-bs-dismiss="modal">Sign
+                          up</button>
                       </form>
                     </div>
                     <div class="modal-footer">
@@ -306,7 +328,8 @@
               </div>
             </li>
             <li class="nav-item" v-if="userName === null" style="font-size: 14px;">
-              <a class="nav-link btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#learnerSignupModal">Sign up</a>
+              <a class="nav-link btn btn-primary text-white" data-bs-toggle="modal"
+                data-bs-target="#learnerSignupModal">Sign up</a>
               <div class="modal fade" id="learnerSignupModal" tabindex="-1" aria-labelledby="learnerSignupModal"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -315,7 +338,10 @@
                       <h5 class="modal-title text-dark" id="learnerSignupModal">Become a ElearnCenter Learner</h5>
                     </div>
                     <div class="modal-body">
-                      <p>Join a welcoming online community of learners where you'll find instant access to all the resources you need to create courses. Get support and guidance as you embark on your educational journey, whether you're a beginner or looking to refine your skills. Let's build something great together!.</p>
+                      <p>Join a welcoming online community of learners where you'll find instant access to all the
+                        resources you need to create courses. Get support and guidance as you embark on your educational
+                        journey, whether you're a beginner or looking to refine your skills. Let's build something great
+                        together!.</p>
                       <form>
                         <div class="mb-3">
                           <input type="text" class="form-control" placeholder="user name" ref="lName">
@@ -335,7 +361,8 @@
                           <label class="form-check-label" for="newsletterCheckbox">I want to receive emails with insider
                             tips, motivation, special updates, and promotions reserved for learner.</label>
                         </div>
-                        <button  class="btn btn-primary" @click="learnerSignUp()" data-bs-dismiss="modal">Sign up</button>
+                        <button class="btn btn-primary" @click="learnerSignUp()" data-bs-dismiss="modal">Sign
+                          up</button>
                       </form>
                     </div>
                     <div class="modal-footer">
@@ -354,10 +381,83 @@
             <li class="nav-item mt-2 me-1" v-if="userName !== null" style="font-size: 14px;">
               Hello!
             </li>
-            <li class="nav-item fw-bold text-primary mt-2" v-if="userName !== null" style="font-size: 14px;">
+            <li class="nav-item fw-bold text-primary mt-2 pointer" data-bs-toggle="modal" data-bs-target="#userInfor"
+              @click="fetchUserInfomation()" v-if="userName !== null" style="font-size: 14px;">
               {{ userName }}
             </li>
+            <div class="modal fade" id="userInfor" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+              aria-labelledby="userInfor" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="userInfor">User infomation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Avatar -->
+                    <div class="text-center mb-3"  v-if="user.avatar !== undefined && user.avatar !== null">
+                      <img :src=user.avatar.originUrl
+                   alt="Avatar" class="rounded-circle" width="100" height="100">
+                    </div>
+                    <!-- Thông tin người dùng -->
+                    <div class="mb-2">
+                      <strong>Name:</strong> <span id="userName">{{ user.name }}</span>
+                    </div>
+                    <div class="mb-2">
+                      <strong>Phone:</strong> <span id="userPhone">{{ user.phone }}</span>
+                    </div>
+                    <div class="mb-2">
+                      <strong>Email:</strong> <span id="userEmail">{{ user.email }}</span>
+                    </div>
+                    <div class="mb-2" v-if="user.roles !== undefined">
+                      <strong>Role:</strong> <span id="userRole">{{ user.roles[0].title }}</span>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                      data-bs-target="#updateUserModal">Update</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="updateUserModal" data-bs-backdrop="static" data-bs-keyboard="false"
+              tabindex="-1" aria-labelledby="updateUserModal" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="updateUserModal">Update User infomation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form>
+                      <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Email address:</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                          ref="uEmail">
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleInputPassword1" class="form-label">Phone:</label>
+                        <input type="number" class="form-control" id="exampleInputPassword1" ref="uPhone">
+                      </div>
+                      <div class="input-group mb-3">
+                        <input v-on:change="changePic()" type="file" class="form-control w-100" id="inputGroupFile02"
+                          accept="image/*" ref="file">
 
+                        <img :src=imageFile class="img-thumbnail mt-3" alt="..." style="width: 120px;height: 67px;">
+                      </div>
+
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                      data-bs-target="#updateUserModal" v-on:click="updateUser()"
+                      data-bs-dismiss="modal">Update</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </ul>
 
         </div>
@@ -484,7 +584,7 @@
 </template>
 
 <script>
-
+import axios from "axios";
 export default {
   name: 'UserPage',
   props: {
@@ -496,7 +596,10 @@ export default {
       password: '',
       show: true,
       role: localStorage.getItem('role'),
-      userName: localStorage.getItem('username')
+      userName: localStorage.getItem('username'),
+      user: new Object(),
+      imageFile: null,
+      changeUser: new Object(),
     }
   },
 
@@ -519,11 +622,74 @@ export default {
 
   },
   methods: {
+    async updateUser() {
+      try {
+        var formData = new FormData();
+        formData.append('file', this.$refs.file.files[0]);
+
+        this.changeUser = {
+          phone: this.$refs.uPhone.value,
+          email: this.$refs.uEmail.value,
+          id: this.user.id
+        };
+
+        if (formData) {
+          try {
+            const responseImg = await axios.post(
+              "api/v1/file/upload-image",
+              formData,
+              {
+                headers: {
+                  Authorization: localStorage.getItem("accessToken"),
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            this.changeUser.avatarId = responseImg.data.body.id;
+          } catch (error) {
+            this.$message.error("Image upload error:", error.response ? error.response.data : error.message);
+            return;
+          }
+        }
+
+        try {
+          await axios.post("api/v1/update-users", this.changeUser, {
+            headers: {
+              Authorization: localStorage.getItem("accessToken"),
+            },
+          });
+          this.$message({
+          message: "User updated successfully!",
+          type: 'success'
+        });
+        } catch (error) {
+          this.$message.error("User update error:", error.response ? error.response.data : error.message);
+        }
+
+      } catch (error) {
+        this.$message.error("Unexpected error:", error);
+      }
+
+    },
+    changePic() {
+      this.imageFile = URL.createObjectURL(this.$refs.file.files[0])
+    },
+    async fetchUserInfomation() {
+      const response = await axios.get("api/v1/info-users", {
+        params: { id: localStorage.getItem("ownerId") },
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        }
+      });
+      this.user = response.data.body;
+    },
+    goOrganizationPage() {
+      this.$router.push({ path: "/organizationPage" })
+    },
     goLecturePage() {
       this.$router.push({ path: "/LectureStudio" })
     },
-    goLearnerPage()
-    {
+    goLearnerPage() {
       this.$router.push({ path: "/LearnerPage" })
     },
     goToCart() {
@@ -541,34 +707,39 @@ export default {
         this.role = localStorage.getItem('role')
       })
     },
-    
-    lectureSignUp(){
+
+    lectureSignUp() {
       let user = new Object();
       user.email = this.$refs.lEmail.value;
       user.name = this.$refs.lName.value;
       user.password = this.$refs.lPassword.value;
       user.phone = this.$refs.lPhone.value;
-      try{
-        this.$store.dispatch('lectureSignUp',user)
+      try {
+        this.$store.dispatch('lectureSignUp', user)
       } catch (error) {
         this.$message.error('some thing when wrong');
       }
     },
 
-    learnerSignUp(){
+    learnerSignUp() {
       let user = new Object();
       user.email = this.$refs.lEmail.value;
       user.name = this.$refs.lName.value;
       user.password = this.$refs.lPassword.value;
       user.phone = this.$refs.lPhone.value;
-      this.$store.dispatch('learnerSignUp',user)
+      this.$store.dispatch('learnerSignUp', user)
     },
     logOutOfSystem() {
       this.userName = null;
       this.role = null;
       this.$store.dispatch('logOut')
-   
+
     }
   }
 }
 </script>
+<style scoped>
+.pointer {
+  cursor: pointer;
+}
+</style>
