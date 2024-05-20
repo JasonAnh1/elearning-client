@@ -28,6 +28,8 @@
           data-bs-target="#createCourseModal">Create new course</h1>
         <h1 class="btn btn-outline-primary  mt-3" style="margin-left:20px ;" data-bs-toggle="modal"
           data-bs-target="#createBookModal">Create new book</h1>
+          <h1 class="btn btn-outline-primary  mt-3" style="margin-left:20px ;" data-bs-toggle="modal"
+          data-bs-target="#createArticleModal">Create new article</h1>
         <br>
         <h1 class="btn btn-outline-success  mt-3" style="margin-left:90px ;" @click="openChat()">Open Chat</h1>
       </div>
@@ -202,6 +204,48 @@
           </div>
         </div>
       </div>
+      <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="createArticleModal">Create Article</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form class="row g-3">
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label">Title</label>
+                  <input type="text" class="form-control" id="exampleFormControlInput1" ref="aTitle">
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label">Short description</label>
+                  <textarea type="text" class="form-control" id="exampleFormControlInput1" ref="aShortDes"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+                  <VueEditor class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="aDescription">
+                  </VueEditor>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleFormControlTextarea1" class="form-label">Content</label>
+                  <VueEditor class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="aContent">
+                  </VueEditor>
+                </div>
+                <div class="input-group mb-3">
+                  <input v-on:change="changePicArticle()" type="file" class="form-control w-100" id="inputGroupFile02"
+                    accept="image/*" ref="articleAvatar">
+
+                  <img :src=imageFile class="img-thumbnail mt-3" alt="..." style="width: 120px;height: 67px;">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" v-on:click="addArticle()">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="container mt-5 mb-5">
       <h3 class="fw-bold">Revenue:</h3>
@@ -271,6 +315,7 @@
       </div>
     </div>
     <BookLecture></BookLecture>
+    <ArticleLecture></ArticleLecture>
   </div>
 </template>
 
@@ -292,6 +337,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tool
 import router from '@/router';
 import { VueEditor } from "vue2-editor";
 import BookLecture from "@/components/book/BookLecture";
+import ArticleLecture from "@/components/article/ArticleLecture"
 export default {
   name: 'LectureStudio',
 
@@ -351,11 +397,16 @@ export default {
         responsive: true
       },
 
+      //artcle
+      aDescription:null,
+      aContent:null,
+      article: new Object(),
     }
   },
   components: {
     VueEditor,
     BookLecture,
+    ArticleLecture,
     Pie
   },
   computed: {
@@ -443,6 +494,9 @@ export default {
     changePic() {
       this.imageFile = URL.createObjectURL(this.$refs.file.files[0])
     },
+    changePicArticle() {
+      this.imageFile = URL.createObjectURL(this.$refs.articleAvatar.files[0])
+    },
     changePicBook() {
       this.imageFile = URL.createObjectURL(this.$refs.bookAvatar.files[0])
     },
@@ -487,6 +541,55 @@ export default {
         description: this.cDescription
       })
       this.$store.dispatch('fetchAddCourse', { 'img': formData, 'request': this.course });
+    },
+   async addArticle() {
+      try {
+        var formData = new FormData();
+        formData.append('file', this.$refs.articleAvatar.files[0]);
+
+        this.article = {
+          title: this.$refs.aTitle.value,
+          shortDes: this.$refs.aShortDes.value,
+          description: this.aDescription,
+          content: this.aContent
+        };
+       
+        if (formData) {
+          try {
+            const responseImg = await axios.post(
+              "api/v1/file/upload-image",
+              formData,
+              {
+                headers: {
+                  Authorization: localStorage.getItem("accessToken"),
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            this.article.mediaId = responseImg.data.body.id;
+          } catch (error) {
+            this.$message.error("Image upload error:", error.response ? error.response.data : error.message);
+            return;
+          }
+        }
+
+        try {
+          await axios.post("api/v1/post-article", this.article, {
+            headers: {
+              Authorization: localStorage.getItem("accessToken"),
+            },
+          });
+          this.$message({
+          message: "post article successfully!",
+          type: 'success'
+        });
+        } catch (error) {
+          this.$message.error("post article error:", error.response ? error.response.data : error.message);
+        }
+
+      } catch (error) {
+        this.$message.error("Unexpected error:", error);
+      }
     }
   },
   props: {

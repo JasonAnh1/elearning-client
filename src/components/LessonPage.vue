@@ -67,8 +67,11 @@
                     <div class="card-body">
                       <div class="d-flex flex-start align-items-center">
                         <img class="rounded-circle shadow-1-strong me-3"
+                          :src= comment.user.avatar.originUrl
+                          alt="avatar" width="60" height="60"  v-if="comment.user.avatar !== undefined && comment.user.avatar !== null"/>
+                        <img class="rounded-circle shadow-1-strong me-3"
                           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s"
-                          alt="avatar" width="60" height="60" />
+                          alt="avatar" width="60" height="60" v-else/>
                         <div>
                           <h6 class="fw-bold text-primary mb-1">{{ comment.user.name }}</h6>
                           <p class="text-muted small mb-0">
