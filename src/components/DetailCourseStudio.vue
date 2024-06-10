@@ -113,11 +113,11 @@
                                 <p class="card-text">{{ currentCourse.author.name }}</p>
                             </div>
                             <div class="card-footer">
-                                <i class="fa-solid fa-star text-warning"></i><i
-                                    class="fa-solid fa-star text-warning"></i><i
-                                    class="fa-solid fa-star text-warning"></i><i
-                                    class="fa-solid fa-star text-warning"></i><i
-                                    class="fa-regular fa-star-half-stroke text-warning"></i> <span
+                                <el-rate class="" :value="currentCourse.rating" disabled show-score text-color="#ff9900"
+                  score-template="{value}">
+                </el-rate>
+
+                             <span
                                     class="text-muted text-decoration-none" style="font-size: 11px;">99999 Learner <i
                                         class="fa-solid fa-user"></i></span>
                             </div>
@@ -270,14 +270,23 @@
             </h4>
             <hr>
             <div class="row gx-5">
-                <div class="col-6 card mb-2 ">
+                <div class="col-6 card mb-2 " v-for="item in comments" v-bind:key="item.id">
                     <div class="card-body">
                         <h5 class="card-title"><img
-                                src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=400&d=mm&r=g"
-                                alt="Avatar" class="rounded-circle" style="width: 70px;"> Lưu Gia H.</h5>
-                        <span class="text-muted">1 tuần trước</span>
+                                :src=item.user.avatar.originUrl
+                                alt="Avatar" class="rounded-circle" style="width: 70px;"
+                                v-if="item.user.avatar !== null"
+                                > 
+                                <img
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadJ-YmNxJTg6v9iO22fzR_65KenYJHFB5zg&s"
+                                alt="Avatar" class="rounded-circle" style="width: 70px;"
+                                v-else
+                                > 
+                                {{item.user.name}}.
+                            </h5>
+                        <span class="text-muted">{{ timePassed(item.createdAt) }}</span>
                         <p class="card-text">
-                            Mọi thứ rất là đỉnh, cảm ơn anh đã tạo ra course này. Đợi course nâng cao hơn của anh :3
+                           {{item.content}}
                         </p>
                         <div class="">
                             <button type="button" class="btn btn-sm btn-outline-secondary">Report</button>
@@ -286,57 +295,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6 card mb-2">
-                    <div class="card-body">
-                        <h5 class="card-title"><img
-                                src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=400&d=mm&r=g"
-                                alt="Avatar" class="rounded-circle" style="width: 70px;"> Nguyễn Thành T.</h5>
-                        <span class="text-muted">1 tháng trước</span>
-                        <p class="card-text">
-                            Cách trình bày nội dung dễ hiểu và dễ tiếp cận. Giọng điệu giảng viên rõ ràng, lôi cuốn
-                            người nghe.
-                        </p>
-                        <div class="">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Report</button>
-                            <i class="fa-solid fa-thumbs-up  btn btn-outline-secondary rounded"></i> <i
-                                class="fa-solid fa-thumbs-down  btn btn-outline-secondary rounded"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 card mb-2">
-                    <div class="card-body">
-                        <h5 class="card-title"><img
-                                src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=400&d=mm&r=g"
-                                alt="Avatar" class="rounded-circle" style="width: 70px;"> Nguyễn Thành T.</h5>
-                        <span class="text-muted">1 tháng trước</span>
-                        <p class="card-text">
-                            Cách trình bày nội dung dễ hiểu và dễ tiếp cận. Giọng điệu giảng viên rõ ràng, lôi cuốn
-                            người nghe.
-                        </p>
-                        <div class="">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Report</button>
-                            <i class="fa-solid fa-thumbs-up  btn btn-outline-secondary rounded"></i> <i
-                                class="fa-solid fa-thumbs-down  btn btn-outline-secondary rounded"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 card mb-2">
-                    <div class="card-body">
-                        <h5 class="card-title"><img
-                                src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=400&d=mm&r=g"
-                                alt="Avatar" class="rounded-circle" style="width: 70px;"> Nguyễn Thành T.</h5>
-                        <span class="text-muted">1 tháng trước</span>
-                        <p class="card-text">
-                            Cách trình bày nội dung dễ hiểu và dễ tiếp cận. Giọng điệu giảng viên rõ ràng, lôi cuốn
-                            người nghe.
-                        </p>
-                        <div class="">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Report</button>
-                            <i class="fa-solid fa-thumbs-up  btn btn-outline-secondary rounded"></i> <i
-                                class="fa-solid fa-thumbs-down  btn btn-outline-secondary rounded"></i>
-                        </div>
-                    </div>
-                </div>
+              
                 <button class="btn w-100 btn-outline-secondary " data-bs-toggle="modal"
                     data-bs-target="#exampleModal">Show
                     all
@@ -567,6 +526,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { VueEditor } from "vue2-editor";
 import router from '@/router';
 export default {
@@ -588,7 +548,8 @@ export default {
             cTitle: null,
             cShortDes: null,
             uSectionTitle: null,
-            uSectionPartNumber: 0
+            uSectionPartNumber: 0,
+            comments: null
         }
     },
     components: {
@@ -606,15 +567,56 @@ export default {
     mounted() {
 
         this.$store.dispatch('fetchCourse', this.courseId)
-
+        this.getCourseComment()
     },
 
     methods: {
         goToLesson(lessonId) {
-            router.push({ path: "/LessonStudio", query: { lessonId: lessonId , courseId: this.courseId} });
+            router.push({ path: "/LessonStudio", query: { lessonId: lessonId, courseId: this.courseId } });
         },
         changePic() {
             this.imageFile = URL.createObjectURL(this.$refs.file.files[0])
+        },
+        timePassed(createdAt) {
+            // Thời điểm đã lưu
+            const savedMoment = new Date(createdAt);
+
+            // Thời điểm hiện tại
+            const currentMoment = new Date();
+
+            // Tính toán thời gian đã trôi qua (tính bằng milliseconds)
+            const timeDifference = currentMoment - savedMoment;
+
+            // Chuyển đổi thời gian từ milliseconds sang giờ, phút, giây
+            const seconds = Math.floor(timeDifference / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (minutes < 3) {
+                return `just now`;
+            }
+
+            if (hours < 1) {
+                return `${minutes} minutes ago`;
+            } else if (hours < 24) {
+                return `${hours} hours ago`;
+            } else if (days < 30) {
+                return `${days} days ago`;
+            }
+            else {
+                const months = Math.floor(days / 30);
+                return `${months} months ago`;
+            }
+        },
+        async getCourseComment() {
+
+            const listCourseComment = await axios.get("api/v1/publish/list-course-comment", {
+                params: { request: this.courseId },
+            });
+
+            this.comments = listCourseComment.data;
+
         },
         updateModel() {
             this.cTitle = this.currentCourse.title,

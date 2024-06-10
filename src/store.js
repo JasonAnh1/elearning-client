@@ -49,9 +49,11 @@ export const store = new Vuex.Store({
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("role", state.userLogined.roles[0].name);
       localStorage.setItem("username", state.userLogined.name);
+      localStorage.setItem("fullName", state.userLogined.fullName);
       localStorage.setItem("userimg", state.userLogined.imageUrl);
       localStorage.setItem("ownerId", state.userLogined.id);
       localStorage.setItem("active", state.userLogined.active);
+
       localStorage.setItem("organizationName",state.userLogined.organization.name);
       localStorage.setItem("organizationId",state.userLogined.organization.id);
     },
@@ -444,6 +446,7 @@ export const store = new Vuex.Store({
     async fetchListCourse(context, payload) {
       const response = await axios.get("api/v1/publish/list-course", {
         params: {
+          title: payload.title,
           page: payload.page,
           status: payload.status,
           startPrice: payload.startPrice,

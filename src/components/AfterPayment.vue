@@ -63,8 +63,6 @@ export default {
              else {
                 this.$store.dispatch('submitPaymentSuccess', transactionObj);
             }
-
-
         }
 
     },

@@ -21,6 +21,10 @@ import ViewBook from "@/components/book/ViewBook";
 import ViewArticle from "./components/article/ViewArticle.vue"
 import OrganizationPage from "@/components/organization/OrganizationPage";
 import OrgManagerment from "./components/admin/OrgManagerment.vue"
+import CategoryTable from "./components/admin/CategoryTable.vue"
+import FilterCourse from "./components/FilterCourse.vue"
+import CertificatePage from "./components/CertificatePage.vue"
+import VerifyCertificate from "./components/VerifyCertificate.vue"
 Vue.use(Router)
 
 export default new Router({ 
@@ -45,6 +49,10 @@ export default new Router({
         { path: '/ViewBook', component: ViewBook},
         { path: '/ViewArticle', component: ViewArticle},
         { path: '/OrganizationPage', component: OrganizationPage},
-        { path: '/OrgManagerment', component: OrgManagerment}
+        { path: '/OrgManagerment', component: OrgManagerment},
+        { path: '/CategoryTable', component: CategoryTable},
+        { path: '/FilterCourse', component: FilterCourse},
+        { path: '/CertificatePage', component: CertificatePage},
+        { path: '/VerifyCertificate', component: VerifyCertificate},
     ]
 })

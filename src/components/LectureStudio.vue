@@ -28,7 +28,7 @@
           data-bs-target="#createCourseModal">Create new course</h1>
         <h1 class="btn btn-outline-primary  mt-3" style="margin-left:20px ;" data-bs-toggle="modal"
           data-bs-target="#createBookModal">Create new book</h1>
-          <h1 class="btn btn-outline-primary  mt-3" style="margin-left:20px ;" data-bs-toggle="modal"
+        <h1 class="btn btn-outline-primary  mt-3" style="margin-left:20px ;" data-bs-toggle="modal"
           data-bs-target="#createArticleModal">Create new article</h1>
         <br>
         <h1 class="btn btn-outline-success  mt-3" style="margin-left:90px ;" @click="openChat()">Open Chat</h1>
@@ -204,7 +204,8 @@
           </div>
         </div>
       </div>
-      <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModal" aria-hidden="true">
+      <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModal"
+        aria-hidden="true">
         <div class="modal-dialog modal-xl">
           <div class="modal-content">
             <div class="modal-header">
@@ -247,6 +248,7 @@
         </div>
       </div>
     </div>
+    <!-- revenue -->
     <div class="container mt-5 mb-5">
       <h3 class="fw-bold">Revenue:</h3>
       <div class="row mt-5">
@@ -294,7 +296,8 @@
               <img :src=item.media.thumbUrl class="card-img-top " alt="...">
               <span class=" ms-3" style="font-size: 10px;"><i class="fa-solid fa-user text-muted"></i> {{
                 item.learnerNumber }}
-                <el-rate class="ps-3" value="3.3" disabled show-score text-color="#ff9900" score-template="{value}">
+                <el-rate class="ps-3" :value="item.rating" disabled show-score text-color="#ff9900"
+                  score-template="{value}">
                 </el-rate>
 
               </span>
@@ -398,8 +401,8 @@ export default {
       },
 
       //artcle
-      aDescription:null,
-      aContent:null,
+      aDescription: null,
+      aContent: null,
       article: new Object(),
     }
   },
@@ -542,7 +545,7 @@ export default {
       })
       this.$store.dispatch('fetchAddCourse', { 'img': formData, 'request': this.course });
     },
-   async addArticle() {
+    async addArticle() {
       try {
         var formData = new FormData();
         formData.append('file', this.$refs.articleAvatar.files[0]);
@@ -553,7 +556,7 @@ export default {
           description: this.aDescription,
           content: this.aContent
         };
-       
+
         if (formData) {
           try {
             const responseImg = await axios.post(
@@ -580,9 +583,9 @@ export default {
             },
           });
           this.$message({
-          message: "post article successfully!",
-          type: 'success'
-        });
+            message: "post article successfully!",
+            type: 'success'
+          });
         } catch (error) {
           this.$message.error("post article error:", error.response ? error.response.data : error.message);
         }
@@ -592,10 +595,6 @@ export default {
       }
     }
   },
-  props: {
-    msg: String
-  },
-
 }
 </script>
 <style scoped>
@@ -603,19 +602,23 @@ export default {
   transition: .3s transform cubic-bezier(.155, 1.105, .295, 1.12), .3s box-shadow, .3s -webkit-transform cubic-bezier(.155, 1.105, .295, 1.12);
   cursor: pointer;
 }
+
 .card:hover {
   transform: scale(1.05);
   box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
 }
+
 .modal-verify-content {
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
 }
+
 .modal-verify-content p {
   margin-bottom: 10px;
 }
+
 .modal-verify-content em {
   font-style: italic;
   color: #333;

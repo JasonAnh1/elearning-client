@@ -517,7 +517,6 @@ export default {
 
     },
     async saveComment() {
-
       const payload = {
         courseId: this.courseId,
         content: this.commentContent,

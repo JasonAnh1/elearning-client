@@ -42,32 +42,13 @@
                             <span slot="title">Revenue</span>
                         </el-menu-item>
 
-                        <el-menu-item index="2" @click="goOrg()">
+                        <el-menu-item index="3" @click="goOrg()">
                             <i class="fa-solid fa-sitemap"></i>
                             <span slot="title">Organization</span>
                         </el-menu-item>
-                        <el-submenu index="3">
-
-                            <template slot="title">
-                                <i class="el-icon-location"></i>
-                                <span slot="title">Navigator One</span>
-                            </template>
-                            <el-menu-item-group>
-                                <span slot="title">Group One</span>
-                                <el-menu-item index="1-1">item one</el-menu-item>
-                                <el-menu-item index="1-2">item two</el-menu-item>
-                            </el-menu-item-group>
-                            <el-menu-item-group title="Group Two">
-                                <el-menu-item index="1-3">item three</el-menu-item>
-                            </el-menu-item-group>
-                            <el-submenu index="1-4">
-                                <span slot="title">item four</span>
-                                <el-menu-item index="1-4-1">item one</el-menu-item>
-                            </el-submenu>
-                        </el-submenu>
-                        <el-menu-item index="4">
-                            <i class="el-icon-menu"></i>
-                            <span slot="title">Navigator Two</span>
+                        <el-menu-item index="4" @click="goCategories()">
+                            <i class="fa-solid fa-list"></i>
+                            <span slot="title">Category</span>
                         </el-menu-item>
                         <el-menu-item index="3" disabled>
                             <i class="el-icon-document"></i>
@@ -110,7 +91,7 @@ export default {
     },
 
     computed: {
-
+        
         listCourseCategories() {
             return this.$store.state.lstCourseCategory;
         },
@@ -125,6 +106,9 @@ export default {
         },
     },
     methods: {
+        goCategories(){
+            this.$router.push({ path: "/CategoryTable" })
+        },
         goCourseTable() {
             this.$router.push({ path: "/CourseTable" })
         },

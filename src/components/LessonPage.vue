@@ -8,15 +8,14 @@
 
        
           </video> -->
+
         <div class="row bg-dark">
           <div class="video-container w-75">
             <video controls v-if="lesson.type === 'VIDEO'" :key="lesson.media.originUrl" ref="videoPlayer"
               @timeupdate="updateProgress">
               <source :src="lesson.media.originUrl" type="video/mp4">
             </video>
-
           </div>
-
         </div>
 
 
@@ -66,12 +65,12 @@
                   <div v-for="comment in lessonComment" v-bind:key="comment.id">
                     <div class="card-body">
                       <div class="d-flex flex-start align-items-center">
-                        <img class="rounded-circle shadow-1-strong me-3"
-                          :src= comment.user.avatar.originUrl
-                          alt="avatar" width="60" height="60"  v-if="comment.user.avatar !== undefined && comment.user.avatar !== null"/>
+                        <img class="rounded-circle shadow-1-strong me-3" :src=comment.user.avatar.originUrl alt="avatar"
+                          width="60" height="60"
+                          v-if="comment.user.avatar !== undefined && comment.user.avatar !== null" />
                         <img class="rounded-circle shadow-1-strong me-3"
                           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s"
-                          alt="avatar" width="60" height="60" v-else/>
+                          alt="avatar" width="60" height="60" v-else />
                         <div>
                           <h6 class="fw-bold text-primary mb-1">{{ comment.user.name }}</h6>
                           <p class="text-muted small mb-0">
@@ -137,9 +136,12 @@
                       :class="{ 'd-none': comment.hiden }">
                       <div class="card-body tier-2 w-75 ms-5">
                         <div class="d-flex flex-start align-items-center">
+                          <img class="rounded-circle shadow-1-strong me-3" :src=subComment.user.avatar.originUrl
+                            alt="avatar" width="60" height="60"
+                            v-if="subComment.user.avatar !== undefined && subComment.user.avatar !== null" />
                           <img class="rounded-circle shadow-1-strong me-3"
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOsXxqt6pUPiLVs_-PrtV2cM2UHjvDWaU-lvaDuSzKA&s"
-                            alt="avatar" width="60" height="60" />
+                            alt="avatar" width="60" height="60" v-else />
                           <div>
                             <h6 class="fw-bold text-primary mb-1">{{ subComment.user.name }}</h6>
                             <p class="text-muted small mb-0">
@@ -304,7 +306,8 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <div v-if="buyAble === true" class="text-dark">Fee: {{formatCurrency( currentCourse.priceSale)  }}</div>
+                  <div v-if="buyAble === true" class="text-dark">Fee: {{formatCurrency( currentCourse.priceSale) }}
+                  </div>
                   <div class="fw-bold text-dark">Chose bank:</div>
                   <select id="bankSelect" v-model="bankCode" class="form-select  mb-2 form-control"
                     aria-label="Default select example">
@@ -312,12 +315,13 @@
                     <option value="VISA" class="text-secondary">VISA CREDIT CARD</option>
                     <option value="MasterCard" class="text-success">MASTERCARD</option>
                     <option value="JCB" class="text-success">Japan Credit Bureau</option>
-              
+
                   </select>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="checkOut()">Check out</button>
+                  <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="checkOut()">Check
+                    out</button>
                 </div>
               </div>
             </div>

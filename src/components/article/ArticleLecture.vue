@@ -1,14 +1,15 @@
 <template>
     <div class="container mt-5 mb-5">
-        <h3 class="fw-bold">My Article:</h3>
-        <div class="card mb-3 shadow-sm" style="border: none; " v-for="item in articles" v-bind:key="item.id" @click="getDetailArticleStudio(item.id)">
+        <h3 class="fw-bold" v-if="forAll !== 'yes'">My Article:</h3>
+        <div class="card mb-3 shadow-sm" style="border: none; " v-for="item in articles" v-bind:key="item.id" >
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img :src=item.media.thumbUrl class="img-fluid rounded-start h-100" alt="...">s
+                    <img :src=item.media.thumbUrl class="img-fluid rounded-start h-100" alt="...">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">{{ item.title }} </h5>
+                        <h5 class="card-title fw-bold" @click="getDetailArticle(item.id)" v-if="forAll === 'yes'">{{ item.title }} </h5>
+                        <h5 class="card-title fw-bold" @click="getDetailArticleStudio(item.id)" v-else>{{ item.title }} </h5>
                         <p class="card-text">{{ item.shortDes }} </p>
                         <p class="card-text text-muted" style="font-size: 12px;">{{ item.user.name }} <span class="ms-2"
                                 style="color: #dd4b1f;font-size: 13px;">1223 <i class="fa-solid fa-fire"></i></span></p>
@@ -29,7 +30,9 @@ import router from '@/router';
 
 export default {
     name: 'ArticleLecture',
-
+    props:{
+        forAll: String
+    },
     data() {
         return {
             articles: [],
@@ -52,11 +55,16 @@ export default {
             router.push({ path: "/ViewArticle", query: { articleId: articleId, author: true } });
 
         },
+        getDetailArticle(articleId) {
+
+            router.push({ path: "/ViewArticle", query: { articleId: articleId } });
+
+        },
         timePassed(createdAt) {
-      // Thời điểm đã lưu
-      const savedMoment = new Date(createdAt);
-      
-      // Thời điểm hiện tại
+            // Thời điểm đã lưu
+            const savedMoment = new Date(createdAt);
+
+    // Thời điểm hiện tại
       const currentMoment = new Date();
       
       // Tính toán thời gian đã trôi qua (tính bằng milliseconds)
@@ -85,9 +93,7 @@ export default {
       }
     },
     },
-    props: {
-        msg: String
-    },
+ 
 }
 </script>
 <style scoped>

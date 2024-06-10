@@ -16,6 +16,8 @@
               <div class="bottom clearfix">
                 <!-- <time class="time">{{ currentDate }}</time> -->
                 <el-button type="text" class="button" @click="viewCourse(course.id)">View Course</el-button>
+                <el-button type="text" class="button text-success" @click="getCertificate(course.id, course.title)"
+                  v-if="course.progress == 100">Generate Certificate</el-button>
               </div>
             </div>
           </el-card>
@@ -85,6 +87,7 @@ export default {
     }
   },
   async mounted() {
+
     this.$store.dispatch('fetchListCourseForLearner')
     if (localStorage.getItem("organizationId") !== null) {
       const response = await axios.get("api/v1/get-org-course-for-member", {
@@ -105,7 +108,7 @@ export default {
   },
 
   methods: {
-    readBook(id){
+    readBook(id) {
       this.$router.push({ path: "/ViewBook", query: { bookId: id } });
     },
     viewCourse(id) {
@@ -113,6 +116,12 @@ export default {
     },
     viewCourseOrg(id) {
       this.$router.push({ path: "/DetailCourse", query: { courseId: id, org: true } });
+    },
+    getCertificate(courseId, courseName) {
+      this.$router.push({
+        path: "/CertificatePage",
+        query: { courseId: courseId, courseName: courseName, userId: localStorage.getItem("ownerId"), userName: localStorage.getItem("fullName") }
+      });
     },
     formatProgress(progress) {
       // Định dạng progress thành hai số sau dấu chấm

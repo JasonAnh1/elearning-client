@@ -263,16 +263,16 @@
                         resources.</p>
                       <form>
                         <div class="mb-3">
-                          <input type="text" class="form-control" placeholder="Full name" ref="lName">
+                          <input type="text" class="form-control" placeholder="Full name" ref="lecName">
                         </div>
                         <div class="mb-3">
-                          <input type="email" class="form-control" placeholder="Email" ref="lEmail">
+                          <input type="email" class="form-control" placeholder="Email" ref="lecEmail">
                         </div>
                         <div class="mb-3">
-                          <input type="number" class="form-control" placeholder="Email" ref="lPhone">
+                          <input type="number" class="form-control" placeholder="Email" ref="lecPhone">
                         </div>
                         <div class="mb-3">
-                          <input type="password" class="form-control" placeholder="Password" ref="lPassword">
+                          <input type="password" class="form-control" placeholder="Password" ref="lecPassword">
                         </div>
 
                         <div class="form-check mb-3">
@@ -600,6 +600,7 @@ export default {
       user: new Object(),
       imageFile: null,
       changeUser: new Object(),
+    
     }
   },
 
@@ -617,8 +618,8 @@ export default {
       return this.$store.state.totalCartMoney;
     },
   },
-  mounted() {
-    console.log(this.role)
+ async mounted() {
+
 
   },
   methods: {
@@ -710,10 +711,10 @@ export default {
 
     lectureSignUp() {
       let user = new Object();
-      user.email = this.$refs.lEmail.value;
-      user.name = this.$refs.lName.value;
-      user.password = this.$refs.lPassword.value;
-      user.phone = this.$refs.lPhone.value;
+      user.email = this.$refs.lecEmail.value;
+      user.name = this.$refs.lecName.value;
+      user.password = this.$refs.lecPassword.value;
+      user.phone = this.$refs.lecPhone.value;
       try {
         this.$store.dispatch('lectureSignUp', user)
       } catch (error) {
