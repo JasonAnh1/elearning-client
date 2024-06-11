@@ -32,6 +32,7 @@ export default {
     name: 'ArticleLecture',
     props:{
         forAll: String
+
     },
     data() {
         return {

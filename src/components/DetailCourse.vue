@@ -19,9 +19,14 @@
                   <a href="#">{{ currentCourse.author.name }}</a>
                 </div>
                 <div class="mb-2">
-                  <div class="btn" @click="openChat( currentCourse.author.name)"> <img
-                      src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=400&d=mm&r=g" alt="Avatar"
-                      class="rounded-circle" style="width: 70px;"> </div>
+                  <div class="btn" @click="openChat( currentCourse.author.name)"> 
+                      <img
+                      :src=currentCourse.author.avatar.originUrl alt="Avatar"
+                      class="rounded-circle" style="width: 70px;" v-if="currentCourse.author.avatar !== null">
+                      <img
+                      src="data:image/png;base64,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" alt="Avatar"
+                      class="rounded-circle" style="width: 70px;" v-else>
+                    </div>
 
                 </div>
               </div>
@@ -89,13 +94,16 @@
           <div class="lecturers">
             <div class="h4 fw-bold mt-4">Lecturers</div>
             <a class="h3 fw-bold"> {{ currentCourse.author.name }}</a>
-            <div class="short-des">Bestselling Azure & TOGAF® Trainer, Microsoft Azure MVP</div>
+            <!-- <div class="short-des">Bestselling Azure & TOGAF® Trainer, Microsoft Azure MVP</div> -->
             <div class="row">
               <div class="col-2">
-                <img src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=400&d=mm&r=g" alt="Avatar"
-                  class="rounded-circle" style="width: 100px;">
+                <img :src=currentCourse.author.avatar.originUrl alt="Avatar"
+                  class="rounded-circle" style="width: 100px;" v-if="currentCourse.author.avatar !== null">
+                  <img src="https://st3.depositphotos.com/9998432/13335/v/450/depositphotos_133352156-stock-illustration-default-placeholder-profile-icon.jpg" alt="Avatar"
+                  class="rounded-circle" style="width: 100px;" v-else>
               </div>
-              <div class="col-5">
+              </div>
+              <!-- <div class="col-5">
                 <p><i class="fa fa-star"></i> 4,5 lecturers rate</p>
                 <p><i class="fa-solid fa-play"></i>60 video</p>
                 <p><i class="fa-solid fa-medal"></i>30210 rate</p>
@@ -109,7 +117,7 @@
               approach to solving their business problems with technical solutions. And the other half with developers,
               explaining the business reasons behind decisions and ensuring that any decisions made on the technical
               side don't restrict the business in unexpected ways.
-            </div>
+            </div> -->
           </div>
           <div class="top-rating mt-4" v-if="mostLikedComment !== null">
             <div class="row">
@@ -466,11 +474,9 @@ export default {
 
     });
 
-
-
     this.courseComments = listCourseComment.data
     this.totalRate 
-  
+
     // tinh rate cua khoa hoc
     let sumRate = 0;
     for (let i = 0; i < this.courseComments.length; i++) {
@@ -482,10 +488,8 @@ export default {
     let mostlikeCommentRes = await axios.get("api/v1/publish/list-most-like-comment",{
       params: { request: this.courseId },
     });
+
     this.mostLikedComment = mostlikeCommentRes.data;
-
-
-
   },
 
   methods: {
@@ -514,7 +518,6 @@ export default {
           footer: '<a href="">Go to cart?</a>'
         });
       }
-
     },
     async saveComment() {
       const payload = {
@@ -543,8 +546,8 @@ export default {
           message: error.response.data.message
         })
       }
-
     },
+
     async likeComment(id) {
       const currentTime = Date.now();
 
@@ -584,18 +587,22 @@ export default {
         })
       }
     },
+
     openChat(leactureName){
       this.$router.push({ path: "/LearnerChatPage", query: { leactureName: leactureName} })
     },
+
     formatCurrency(amount) {
       return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     },
+
     goToLesson(lessonId) {
       this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId ,
         courseId: this.courseId, 
         enrolled:  this.currentCourse.isEnrolled,
         org: this.$route.query.org } })
     },
+    
     timePassed(createdAt) {
       // Thời điểm đã lưu
       const savedMoment = new Date(createdAt);

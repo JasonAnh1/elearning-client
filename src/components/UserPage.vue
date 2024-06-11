@@ -263,7 +263,10 @@
                         resources.</p>
                       <form>
                         <div class="mb-3">
-                          <input type="text" class="form-control" placeholder="Full name" ref="lecName">
+                          <input type="text" class="form-control" placeholder="user name" ref="lecName">
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" placeholder="Full name" ref="lecFullName">
                         </div>
                         <div class="mb-3">
                           <input type="email" class="form-control" placeholder="Email" ref="lecEmail">
@@ -345,6 +348,9 @@
                       <form>
                         <div class="mb-3">
                           <input type="text" class="form-control" placeholder="user name" ref="lName">
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" placeholder="full name" ref="lFullName">
                         </div>
                         <div class="mb-3">
                           <input type="email" class="form-control" placeholder="Email" ref="lEmail">
@@ -715,6 +721,7 @@ export default {
       user.name = this.$refs.lecName.value;
       user.password = this.$refs.lecPassword.value;
       user.phone = this.$refs.lecPhone.value;
+      user.fullName = this.$refs.lecFullName.value;
       try {
         this.$store.dispatch('lectureSignUp', user)
       } catch (error) {
@@ -728,7 +735,12 @@ export default {
       user.name = this.$refs.lName.value;
       user.password = this.$refs.lPassword.value;
       user.phone = this.$refs.lPhone.value;
-      this.$store.dispatch('learnerSignUp', user)
+      user.fullName = this.$refs.lFullName.value;
+      try {
+        this.$store.dispatch('learnerSignUp', user)
+      } catch (error) {
+        this.$message.error('some thing when wrong');
+      }
     },
     logOutOfSystem() {
       this.userName = null;

@@ -304,8 +304,8 @@ export default {
       }).then((response) => {
         this.listAddCourses = response.data.body
       })
-
     },
+
     fetchOrganizationPlan() {
       axios
         .get('api/v1/get-plan', {
@@ -316,6 +316,7 @@ export default {
           this.currentPlan = response.data.body
         })
     },
+
     fetchOrganizationCourse() {
       axios
         .get('api/v1/get-org-course', {
@@ -326,9 +327,8 @@ export default {
         }).then((response) => {
           this.course = response.data.body
         })
-
-
     },
+
     fetchOrganizationMembers() {
       axios
         .get('api/v1/list-organization-member', {
@@ -363,6 +363,7 @@ export default {
           cb([]); // Trả về mảng rỗng trong trường hợp lỗi
         });
     },
+
     handleDelete(index, row) {
       console.log(index, row);
       this.$confirm('Do you want remove this member: ' + row.name + '?', 'Warning', {
@@ -405,6 +406,7 @@ export default {
         });
 
     },
+
     // Xử lý việc chọn một gợi ý
     handleSelect(item) {
       let user = {
@@ -451,19 +453,22 @@ export default {
 
       // Xử lý mục đã chọn theo nhu cầu
     },
+
     goLecturePage() {
       this.$router.push({ path: "/LectureStudio" })
     },
+
     goLearnerPage() {
       this.$router.push({ path: "/LearnerPage" })
     },
+
     goToCart() {
       this.$router.push({ path: "/CartPage" })
     },
+
     goHome() {
       this.$router.push({ path: "/" })
     },
-
   }
 }
 </script>

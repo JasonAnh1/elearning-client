@@ -18,6 +18,8 @@
               <br>
               <a class="btn btn-outline-primary btn-lg m-2" role="button" data-bs-toggle="modal"
                 data-bs-target="#organizationModel">Organization</a>
+                <a class="btn btn-outline-primary btn-lg m-2"  v-on:click="goVerifyCertPage()"
+               >Certificate verify</a>
               <div class="modal fade" id="organizationModel" tabindex="-1" aria-labelledby="organizationSignUpModal"
                 aria-hidden="false">
                 <div class="modal-dialog">
@@ -309,6 +311,9 @@ export default {
     },
     goFilterCoursePage(id){
       this.$router.push({ path: "/FilterCourse" , query:{categoryId: id}})
+    },
+    goVerifyCertPage(){
+      this.$router.push({ path: "/VerifyCertificate"})
     },
   async  getArticles(){
       const response = await axios.get("api/v1/publish/get-articles", {

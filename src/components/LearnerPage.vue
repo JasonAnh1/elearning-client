@@ -18,6 +18,8 @@
                 <el-button type="text" class="button" @click="viewCourse(course.id)">View Course</el-button>
                 <el-button type="text" class="button text-success" @click="getCertificate(course.id, course.title)"
                   v-if="course.progress == 100">Generate Certificate</el-button>
+                  <el-button type="text" class="button text-success" @click="goToLesson(course.id, course.firstLesson)"
+                  v-if="course.firstLesson !== 0">Learn</el-button>
               </div>
             </div>
           </el-card>
@@ -47,7 +49,7 @@
       </div>
     </div>
     <div class="container mt-5 mb-5">
-      <h3 class="fw-bold">My books:</h3>
+      <h3 class="fw-bold" v-if="books.length > 0 ">My books:</h3>
       <div class="row row-cols-1 row-cols-md-4">
         <div v-for="item in books" v-bind:key="item.id">
           <div class="card" style="width: 17rem;">
@@ -123,10 +125,12 @@ export default {
         query: { courseId: courseId, courseName: courseName, userId: localStorage.getItem("ownerId"), userName: localStorage.getItem("fullName") }
       });
     },
+
     formatProgress(progress) {
       // Định dạng progress thành hai số sau dấu chấm
       return parseFloat(progress).toFixed(2);
     },
+
     customColorMethod(percentage) {
       if (percentage < 30) {
         return '#909399';
@@ -137,6 +141,11 @@ export default {
       }
     },
 
+    goToLesson(courseId,lessonId) {
+      this.$router.push({ path: "/LessonPage", query: { lessonId: lessonId ,
+        courseId: courseId, 
+        enrolled:  true} })
+    },
   },
 }
 </script>

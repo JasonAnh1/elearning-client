@@ -202,11 +202,15 @@
                                     <button v-for="lesson in item.lessons" v-bind:key="lesson.id" type="button"
                                         class="list-group-item list-group-item-action " aria-current="true"
                                         v-on:click="goToLesson(lesson.id)">
-                                        <i class="fa-solid fa-video" v-if="lesson.type === 'VIDEO'">
-
-                                        </i>
-                                        <i class="fa-solid fa-file-lines" v-else-if="lesson.type === 'TEXT'"></i><span
-                                            class="fw-bold" style="font-size: 14px;"> Reading:</span> {{ lesson.title }}
+                                        <span v-if="lesson.type === 'VIDEO'">
+                                        <i class="fa-solid fa-video" >
+                                        </i><span
+                                        class="fw-bold" style="font-size: 14px;"> Video:</span></span>
+                                        <span  v-else-if="lesson.type === 'TEXT'">
+                                            <i class="fa-solid fa-file-lines"></i><span
+                                            class="fw-bold" style="font-size: 14px;"> Reading:</span>
+                                         </span>
+                                        {{ lesson.title }}
                                     </button>
 
                                     <div class="btn btn-outline-primary w-100" v-on:click="addLesson(item.id)">Add

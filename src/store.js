@@ -53,9 +53,11 @@ export const store = new Vuex.Store({
       localStorage.setItem("userimg", state.userLogined.imageUrl);
       localStorage.setItem("ownerId", state.userLogined.id);
       localStorage.setItem("active", state.userLogined.active);
+      if(state.userLogined.organization !== null){
+        localStorage.setItem("organizationName",state.userLogined.organization.name);
+        localStorage.setItem("organizationId",state.userLogined.organization.id);
+      }
 
-      localStorage.setItem("organizationName",state.userLogined.organization.name);
-      localStorage.setItem("organizationId",state.userLogined.organization.id);
     },
     setEventSource(state, eventSource) {
       state.eventSource = eventSource;
@@ -206,7 +208,7 @@ export const store = new Vuex.Store({
         .post("api/v1/auth/signin", phone, password)
         .catch((error) => console.log(error));
       if (response !== undefined) {
-        console.log(response.data);
+        // register to socket 
         context.commit("loginServer", response.data);
         const eventSource = new EventSource(
           `http://localhost:8080/api/sse/${response.data.id}`
@@ -217,11 +219,14 @@ export const store = new Vuex.Store({
           // Hiển thị thông báo hoặc xử lý sự kiện theo yêu cầu
           // Ví dụ: dispatch('showNotification', event.data);
         };
+
         if (response.data.roles[0].name == "ROLE_LECTURE") {
           router.push({ path: "/LectureStudio" }).catch(() => {});
         } else if (response.data.roles[0].name == "ROLE_LEARNER") {
           router.push({ path: "/LearnerPage" }).catch(() => {});
-        } else {
+        } else if (response.data.roles[0].name == "ROLE_ORGANIZATION") {
+          router.push({ path: "/organizationPage" }).catch(() => {});
+        }else {
           setTimeout(location.reload.bind(location), 90);
           router.push({ path: "/CourseTable" }).catch(() => {});
         }
