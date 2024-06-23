@@ -27,11 +27,8 @@ export default {
 
   },
   name: 'CertificatePage',
-  props: {
-    msg: String
-  },
   async mounted() {
-    this.addUserNameToPDF(this.studentName, this.courseName)
+    this.addUserNameToPDF(this.studentName, this.courseName,this.courseId,this.userId)
   },
   methods: {
     splitTextToLines(text, fontSize, maxWidth, font) {
@@ -57,7 +54,7 @@ export default {
       return lines;
     },
 
-    async addUserNameToPDF(userName, courseName) {
+    async addUserNameToPDF(userName, courseName,courseId,userId) {
       // Nạp file PDF sẵn có từ thư mục public
       const existingPdfBytes = await fetch('/certificate.pdf').then(res => res.arrayBuffer());
 
@@ -68,6 +65,7 @@ export default {
       const pages = pdfDoc.getPages();
       const firstPage = pages[0];
       const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+      const timesRomanBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
       const textWidth = timesRomanFont.widthOfTextAtSize(userName, 40);
       const pageWidth = firstPage.getWidth();
       const x = (pageWidth - textWidth) / 2;
@@ -79,6 +77,28 @@ export default {
         font: timesRomanFont,
         color: rgb(0, 0, 0),
       });
+
+      let request = {
+        courseId:courseId,
+        userId: userId
+      }
+      // create certificate code
+      const certificateCodeResponse = await axios.post("api/v1/create-certificate", request, {
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
+      const code = certificateCodeResponse.data.code;
+      firstPage.drawText(`Certificate code: ${code}`, {
+        x: 370,
+        y: 100,
+        size: 10,
+        font: timesRomanBoldFont,
+        color: rgb(0, 0, 0),
+      });
+
+
+
       const lines = this.splitTextToLines(courseName, 14, 300, timesRomanFont);
       let y = 280;
 
@@ -95,6 +115,8 @@ export default {
         });
         y -= 28; // Adjust this value based on line height
       }
+
+
 
       try {
         // Save the PDF document and create a Blob

@@ -18,8 +18,7 @@
               <br>
               <a class="btn btn-outline-primary btn-lg m-2" role="button" data-bs-toggle="modal"
                 data-bs-target="#organizationModel">Organization</a>
-                <a class="btn btn-outline-primary btn-lg m-2"  v-on:click="goVerifyCertPage()"
-               >Certificate verify</a>
+              <a class="btn btn-outline-primary btn-lg m-2" v-on:click="goVerifyCertPage()">Certificate verify</a>
               <div class="modal fade" id="organizationModel" tabindex="-1" aria-labelledby="organizationSignUpModal"
                 aria-hidden="false">
                 <div class="modal-dialog">
@@ -105,13 +104,11 @@
               <section class="row mt-3">
 
                 <div class="col-md-3 mt-1" v-for="item in categories" v-bind:key="item.id">
-                  <a  class="text-decoration-none text-dark" @click="goFilterCoursePage(item.id)">
+                  <a class="text-decoration-none text-dark" @click="goFilterCoursePage(item.id)">
                     <div class="card border-0 shadow-sm">
                       <div class="row g-0">
                         <div class=" col-lg-4">
-                          <img
-                            :src= item.avatar.originUrl
-                            class="card-img-top
+                          <img :src=item.avatar.originUrl class="card-img-top
                           h-100" alt="...">
                         </div>
                         <div class="col-md-8">
@@ -124,23 +121,26 @@
                     </div>
                   </a>
                 </div>
-               
+
 
               </section>
-        
+
 
             </div>
 
           </div>
           <div class="row mt-5">
-            <h4 class="fw-bold">Popular for Data Engineers</h4>
+            <h4 class="fw-bold">Promote</h4>
             <!-- khoa hoc cho tat ca -->
             <carousel :per-page="perPage" :autoplay="true" :loop="true" :autoplayTimeout="2000">
-              <slide v-for="item in courses" v-bind:key="item.id">
+              <slide v-for="item in courses.filter(course => course.advertise === 'PROMOTE')" v-bind:key="item.id">
 
                 <div class="card ms-2" style="border: none;">
-                  <img :src=item.media.thumbUrl class="card-img-top" alt="..." style="height: 150px;"
-                    @click="goToDetail(item.id)">
+                  <div class="position-relative">
+                    <img :src="item.media.thumbUrl" class="card-img-top"
+                      :class="{ 'promote-border': item.advertise === 'PROMOTE' }" alt="...">
+                    <span v-if="item.advertise === 'PROMOTE'" class="promote-overlay">PROMOTE</span>
+                  </div>
                   <div class="card-body" @click="goToDetail(item.id)">
                     <h5 class="fw-bold" style="font-size: 16px;">
                       {{ item.title }}
@@ -352,5 +352,25 @@ export default {
 .card:hover {
   transform: scale(1.05);
   box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
+}
+.promote-border {
+  border: 2px solid #ff9900; 
+
+}
+
+.position-relative {
+  position: relative;
+}
+
+.promote-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 153, 0, 0.8); /* Màu nền với độ trong suốt */
+  color: white; /* Màu chữ */
+  padding: 5px 10px; /* Khoảng cách giữa chữ và khung */
+  border-radius: 5px; /* Bo tròn các góc */
+  font-size: 12px; /* Kích thước chữ */
+  font-weight: bold; /* Chữ đậm */
 }
 </style>

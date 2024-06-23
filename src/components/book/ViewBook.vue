@@ -5,7 +5,7 @@
   
     /> -->
     <div class="row  bg-dark ">
-        <h2 class="fw-bold text-primary m-5" style="font-size: 36px;">ABC's-of-Science</h2>
+        <h2 class="fw-bold text-primary m-5" style="font-size: 36px;">{{book.title}}</h2>
       
   <div class="col-2 ">
     <button class="btn btn-outline-primary ms-5 "  :disabled="page <= 1" @click="page--">❮</button>

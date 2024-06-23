@@ -12,7 +12,7 @@
         <div class="row bg-dark">
           <div class="video-container w-75">
             <video controls v-if="lesson.type === 'VIDEO'" :key="lesson.media.originUrl" ref="videoPlayer"
-              @timeupdate="updateProgress">
+              @timeupdate="updateProgress" @seeking="onSeeking" @seeked="onSeeked">
               <source :src="lesson.media.originUrl" type="video/mp4">
             </video>
           </div>
@@ -364,7 +364,11 @@ export default {
         { color: '#5cb87a', percentage: 60 },
         { color: '#1989fa', percentage: 80 },
         { color: '#6f7ad3', percentage: 100 }
-      ]
+      ],
+      // Chong tua
+      lastSeekTime: 0, // Thời điểm lần tua cuối cùng
+      maxSeekJump: 30, // Số giây tối đa cho phép tua một lần
+      isSettingProgress: false // Biến xác định khi nào tiến độ đang được thiết lập
     }
   },
   components: {
@@ -417,6 +421,25 @@ export default {
     window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
+    onSeeking(event) {
+      if (this.isSettingProgress) {
+        return;
+      }
+
+      const video = event.target;
+      const currentTime = video.currentTime;
+      const timeDifference = currentTime - this.lastSeekTime;
+
+      if (Math.abs(timeDifference) > this.maxSeekJump) {
+        video.currentTime = this.lastSeekTime; // Đưa video trở về thời điểm hợp lý
+        this.$message.error('Oops, skipping too fast.');
+      }
+    },
+    onSeeked(event) {
+      if (!this.isSettingProgress) {
+        this.lastSeekTime = event.target.currentTime;
+      }
+    },
     formatCurrency(amount) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
         },
@@ -515,10 +538,12 @@ export default {
 
           // Đặt currentTime của video tới thời gian tính được
           video.currentTime = targetTime;
+          this.lastSeekTime = targetTime;
+          if(watchedPercentage == 100){
+            this.isSettingProgress = true;
+          }
         });
       } catch (error) {
-
-
         this.$notify.error({
           title: 'Error',
           message: 'There was an error getting the percentage viewed'
@@ -548,7 +573,7 @@ export default {
           this.percentage = currentPercentage;
           console.log('Phần trăm đã xem:', this.percentage);
         }
-        if (currentPercentage >= 100) {
+        if (currentPercentage >= 80) {
 
           this.saveProgress(currentPercentage);
           // Đặt biến cờ là true để ngăn cập nhật tiến độ tiếp theo

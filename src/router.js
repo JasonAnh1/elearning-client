@@ -22,6 +22,7 @@ import ViewArticle from "./components/article/ViewArticle.vue"
 import OrganizationPage from "@/components/organization/OrganizationPage";
 import OrgManagerment from "./components/admin/OrgManagerment.vue"
 import CategoryTable from "./components/admin/CategoryTable.vue"
+import ListLectures from "./components/admin/ListLectures.vue"
 import FilterCourse from "./components/FilterCourse.vue"
 import CertificatePage from "./components/CertificatePage.vue"
 import VerifyCertificate from "./components/VerifyCertificate.vue"
@@ -54,5 +55,6 @@ export default new Router({
         { path: '/FilterCourse', component: FilterCourse},
         { path: '/CertificatePage', component: CertificatePage},
         { path: '/VerifyCertificate', component: VerifyCertificate},
+        { path: '/ListLectures', component: ListLectures},
     ]
 })

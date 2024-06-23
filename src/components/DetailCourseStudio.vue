@@ -4,6 +4,53 @@
             <h1 class="t ms-5 pt-5 fw-bold ps-5 text-primary">ElearnCenter Studio</h1>
             <h1 class="btn btn-outline-primary  mt-3" style="margin-left:90px ;" data-bs-toggle="modal"
                 data-bs-target="#createCourseModal" v-on:click="updateModel()">Edit course</h1>
+            <h1 class="btn btn-outline-warning  mt-3" style="margin-left:13px ;" data-bs-toggle="modal"
+                data-bs-target="#promoteCourseModal" v-if="currentCourse.advertise === 'NONE'">
+                Promote course</h1>
+            <div class="modal fade" id="promoteCourseModal" tabindex="-1" aria-labelledby="promoteCourseModal"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-primary" id="promoteCourseModal">Promote course checkout</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-promote-content">
+                                <p><em>To enhance your learning experience and unlock exclusive features, we are excited
+                                        to offer you the opportunity to promote your course on our platform.</em></p>
+                                <p><em>Promoting your course is essential to reach a wider audience, increase your
+                                        visibility, and attract more learners. This process involves a nominal promotion
+                                        fee that ensures your course gets the attention it deserves.</em></p>
+                                <p><em>Once the promotion fee is successfully processed, our team will promptly
+                                        highlight your course, giving it a prominent position on our platform and
+                                        boosting its exposure to potential learners.</em></p>
+                                <p><em>Thank you for choosing to promote your course with us. We are committed to
+                                        helping you succeed and look forward to seeing your course thrive on our
+                                        platform.</em></p>
+
+
+                            </div>
+                            <div class="fw-bold">Chose bank:</div>
+                            <select id="bankSelect" v-model="bankCode" class="form-select  mb-2 form-control"
+                                aria-label="Default select example">
+                                <option value="NCB" class="text-primary" selected>NATIONAL CITIZEN BANK (NCB)</option>
+                                <option value="VISA" class="text-secondary">VISA CREDIT CARD</option>
+                                <option value="MasterCard" class="text-success">MASTERCARD</option>
+                                <option value="JCB" class="text-success">Japan Credit Bureau</option>
+                                <!-- Thêm các option khác tùy theo nhu cầu -->
+                            </select>
+                            <div class="fw-bold">Fee will be:</div>
+                            <p>đ 100.000</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                                @click="checkOutPromote()">Checkout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModal"
                 aria-hidden="true">
                 <div class="modal-dialog modal-xl">
@@ -114,11 +161,10 @@
                             </div>
                             <div class="card-footer">
                                 <el-rate class="" :value="currentCourse.rating" disabled show-score text-color="#ff9900"
-                  score-template="{value}">
-                </el-rate>
+                                    score-template="{value}">
+                                </el-rate>
 
-                             <span
-                                    class="text-muted text-decoration-none" style="font-size: 11px;">99999 Learner <i
+                                <span class="text-muted text-decoration-none" style="font-size: 11px;">99999 Learner <i
                                         class="fa-solid fa-user"></i></span>
                             </div>
                         </a>
@@ -203,13 +249,12 @@
                                         class="list-group-item list-group-item-action " aria-current="true"
                                         v-on:click="goToLesson(lesson.id)">
                                         <span v-if="lesson.type === 'VIDEO'">
-                                        <i class="fa-solid fa-video" >
-                                        </i><span
-                                        class="fw-bold" style="font-size: 14px;"> Video:</span></span>
-                                        <span  v-else-if="lesson.type === 'TEXT'">
-                                            <i class="fa-solid fa-file-lines"></i><span
-                                            class="fw-bold" style="font-size: 14px;"> Reading:</span>
-                                         </span>
+                                            <i class="fa-solid fa-video">
+                                            </i><span class="fw-bold" style="font-size: 14px;"> Video:</span></span>
+                                        <span v-else-if="lesson.type === 'TEXT'">
+                                            <i class="fa-solid fa-file-lines"></i><span class="fw-bold"
+                                                style="font-size: 14px;"> Reading:</span>
+                                        </span>
                                         {{ lesson.title }}
                                     </button>
 
@@ -276,21 +321,15 @@
             <div class="row gx-5">
                 <div class="col-6 card mb-2 " v-for="item in comments" v-bind:key="item.id">
                     <div class="card-body">
-                        <h5 class="card-title"><img
-                                :src=item.user.avatar.originUrl
-                                alt="Avatar" class="rounded-circle" style="width: 70px;"
-                                v-if="item.user.avatar !== null"
-                                > 
-                                <img
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadJ-YmNxJTg6v9iO22fzR_65KenYJHFB5zg&s"
-                                alt="Avatar" class="rounded-circle" style="width: 70px;"
-                                v-else
-                                > 
-                                {{item.user.name}}.
-                            </h5>
+                        <h5 class="card-title"><img :src=item.user.avatar.originUrl alt="Avatar" class="rounded-circle"
+                                style="width: 70px;" v-if="item.user.avatar !== null">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadJ-YmNxJTg6v9iO22fzR_65KenYJHFB5zg&s"
+                                alt="Avatar" class="rounded-circle" style="width: 70px;" v-else>
+                            {{ item.user.name }}.
+                        </h5>
                         <span class="text-muted">{{ timePassed(item.createdAt) }}</span>
                         <p class="card-text">
-                           {{item.content}}
+                            {{ item.content }}
                         </p>
                         <div class="">
                             <button type="button" class="btn btn-sm btn-outline-secondary">Report</button>
@@ -299,7 +338,7 @@
                         </div>
                     </div>
                 </div>
-              
+
                 <button class="btn w-100 btn-outline-secondary " data-bs-toggle="modal"
                     data-bs-target="#exampleModal">Show
                     all
@@ -537,6 +576,7 @@ export default {
     name: 'DetailCourseStudio',
     data() {
         return {
+            bankCode: 'NCB',
             courseSection: new Object(),
             courseId: this.$route.query.courseId,
             imageFile: null,
@@ -566,10 +606,8 @@ export default {
         currentCourse() {
             return this.$store.state.currentTagetCourse;
         },
-
     },
     mounted() {
-
         this.$store.dispatch('fetchCourse', this.courseId)
         this.getCourseComment()
     },
@@ -634,7 +672,6 @@ export default {
                 this.cPriceSale = this.currentCourse.priceSale,
                 this.cShortDes = this.currentCourse.shortDes
         },
-
         updateCourseSection(sectionId) {
 
             const updateSection = new Object({
@@ -686,7 +723,28 @@ export default {
         },
         addLesson(courseStId) {
             router.push({ path: 'CreateLesson', query: { courseSectionId: courseStId } })
-        }
+        },
+        checkOutPromote() {
+            if (this.bankCode) {
+                let payload = {
+                    bankCode: this.bankCode,
+                    total: 100000
+                }
+                let transactionObj = new Object();
+                transactionObj.type = 'promote'
+                transactionObj.amount = 100000;
+                transactionObj.courseId = this.currentCourse.id;
+                localStorage.setItem('transactionObj', JSON.stringify(transactionObj));
+                this.$store.dispatch('goPaidPage', payload);
+            } else {
+                this.$swal.fire({
+                    icon: 'error',
+                    title: 'Oh no',
+                    text: 'Some thing wrong!',
+                    footer: '<a href="">Go to cart?</a>'
+                });
+            }
+        },
     },
     props: {
         msg: String
@@ -694,3 +752,20 @@ export default {
 
 }
 </script>
+<style scoped>
+.modal-promote-content {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.modal-promote-content p {
+    margin-bottom: 10px;
+}
+
+.modal-promote-content em {
+    font-style: italic;
+    color: #333;
+}
+</style>

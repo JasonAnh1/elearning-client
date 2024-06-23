@@ -50,18 +50,11 @@
                             <i class="fa-solid fa-list"></i>
                             <span slot="title">Category</span>
                         </el-menu-item>
-                        <el-menu-item index="3" disabled>
-                            <i class="el-icon-document"></i>
-                            <span slot="title">Navigator Three</span>
+                        <el-menu-item index="5" @click="goLectures()">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            <span slot="title">Lectures</span>
                         </el-menu-item>
-                        <el-menu-item index="4">
-                            <i class="el-icon-setting"></i>
-                            <span slot="title">Navigator Four</span>
-                        </el-menu-item>
-                        <el-menu-item index="4" @click="logout()">
-                            <i class="el-icon-error"></i>
-                            <span slot="title">Log out</span>
-                        </el-menu-item>
+                       
                     </el-menu>
                 </el-col>
                 <el-col :span="20">
@@ -108,6 +101,9 @@ export default {
     methods: {
         goCategories(){
             this.$router.push({ path: "/CategoryTable" })
+        },
+        goLectures(){
+            this.$router.push({ path: "/ListLectures" })
         },
         goCourseTable() {
             this.$router.push({ path: "/CourseTable" })

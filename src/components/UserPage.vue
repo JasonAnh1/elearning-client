@@ -175,7 +175,12 @@
             </li>
             <li class="nav-item">
               <form class="d-flex " style="width: 800px;">
-                <input class="form-control   " type="search" placeholder="Search for course" aria-label="Search">
+                <el-autocomplete class="inline-input" v-model="state1" :fetch-suggestions="querySearch"
+                  placeholder="Please Input" @select="handleSelect" style="width: 550px;" :popper-class="popperClass">
+                  <template v-slot:suggestion="{ item }">
+                    <div>{{ item.title }}</div>
+                  </template>
+                </el-autocomplete>
                 <button class="btn btn-primary text-white" type="submit"><i
                     class="fa-brands fa-searchengin"></i></button>
               </form>
@@ -332,7 +337,8 @@
             </li>
             <li class="nav-item" v-if="userName === null" style="font-size: 14px;">
               <a class="nav-link btn btn-primary text-white" data-bs-toggle="modal"
-                data-bs-target="#learnerSignupModal">Sign up</a>
+                data-bs-target="#learnerSignupModal">Sign
+                up</a>
               <div class="modal fade" id="learnerSignupModal" tabindex="-1" aria-labelledby="learnerSignupModal"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -401,9 +407,8 @@
                   </div>
                   <div class="modal-body">
                     <!-- Avatar -->
-                    <div class="text-center mb-3"  v-if="user.avatar !== undefined && user.avatar !== null">
-                      <img :src=user.avatar.originUrl
-                   alt="Avatar" class="rounded-circle" width="100" height="100">
+                    <div class="text-center mb-3" v-if="user.avatar !== undefined && user.avatar !== null">
+                      <img :src=user.avatar.originUrl alt="Avatar" class="rounded-circle" width="100" height="100">
                     </div>
                     <!-- Thông tin người dùng -->
                     <div class="mb-2">
@@ -440,11 +445,12 @@
                       <div class="mb-3">
                         <label for="exampleInputEmail1" class="form-label">Email address:</label>
                         <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                          ref="uEmail"  v-model="user.email" >
+                          ref="uEmail" v-model="user.email">
                       </div>
                       <div class="mb-3">
                         <label for="exampleInputPassword1" class="form-label">Phone:</label>
-                        <input type="number" class="form-control" id="exampleInputPassword1" ref="uPhone" v-model="user.phone">
+                        <input type="number" class="form-control" id="exampleInputPassword1" ref="uPhone"
+                          v-model="user.phone">
                       </div>
                       <div class="input-group mb-3">
                         <input v-on:change="changePic()" type="file" class="form-control w-100" id="inputGroupFile02"
@@ -606,7 +612,8 @@ export default {
       user: new Object(),
       imageFile: null,
       changeUser: new Object(),
-    
+      state1: '',
+      popperClass: 'my-autocomplete'
     }
   },
 
@@ -624,11 +631,41 @@ export default {
       return this.$store.state.totalCartMoney;
     },
   },
- async mounted() {
+  async mounted() {
 
 
   },
   methods: {
+    async querySearch(queryString, cb) {
+      try {
+        const response = await axios.get('api/v1/publish/list-all-course', {
+          params: { title: queryString }
+        });
+        // Check and use the correct path for data
+        const results = response.data.body;
+        // Ensure the results are in the correct format
+        const suggestions = results.map(course => ({
+          value: course.title, // Use value if el-autocomplete expects it
+          title: course.title, // Keep original title for display
+          id: course.id,
+        }));
+        cb(suggestions);
+      } catch (error) {
+        console.error("Error fetching data from API:", error);
+        cb([]); // Return an empty array if there's an error
+      }
+    },
+    handleSelect(item) {
+    // Add a check to force re-navigation to the same route
+    setTimeout(location.reload.bind(location), 0.1);
+    if (this.$route.path === "/DetailCourse" && this.$route.query.courseId === item.id) {
+      this.$router.push({ path: "/DetailCourse", query: { courseId: null } }).then(() => {
+        this.$router.push({ path: "/DetailCourse", query: { courseId: item.id } });
+      });
+    } else {
+      this.$router.push({ path: "/DetailCourse", query: { courseId: item.id } });
+    }
+  },
     async updateUser() {
       try {
         var formData = new FormData();
@@ -666,9 +703,9 @@ export default {
             },
           });
           this.$message({
-          message: "User updated successfully!",
-          type: 'success'
-        });
+            message: "User updated successfully!",
+            type: 'success'
+          });
         } catch (error) {
           this.$message.error("User update error:", error.response ? error.response.data : error.message);
         }
@@ -714,7 +751,6 @@ export default {
         this.role = localStorage.getItem('role')
       })
     },
-
     lectureSignUp() {
       let user = new Object();
       user.email = this.$refs.lecEmail.value;
@@ -728,7 +764,6 @@ export default {
         this.$message.error('some thing when wrong');
       }
     },
-
     learnerSignUp() {
       let user = new Object();
       user.email = this.$refs.lEmail.value;
@@ -752,6 +787,11 @@ export default {
 }
 </script>
 <style scoped>
+.my-autocomplete .el-autocomplete-suggestion__list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 .pointer {
   cursor: pointer;
 }

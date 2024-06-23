@@ -134,13 +134,20 @@ export const store = new Vuex.Store({
       context.commit("loginServer", response.data);
     },
     async submitPlanPaymentSuccess(context, payload) {
-      const response = await axios.get("api/v1/create-plan", {
+      await axios.get("api/v1/create-plan", {
         params: { type: payload.plan },
         headers: {
           Authorization: localStorage.getItem("accessToken"),
         },
       });
-      console.log(response.data);
+      localStorage.removeItem("transactionObj");
+    },
+    async submitPromotePaymentSuccess(context, payload) {
+      await axios.post("api/v1/promote-transaction", payload, {
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
       localStorage.removeItem("transactionObj");
     },
     async submitPaymentSuccess(context, payload) {
@@ -227,7 +234,7 @@ export const store = new Vuex.Store({
         } else if (response.data.roles[0].name == "ROLE_ORGANIZATION") {
           router.push({ path: "/organizationPage" }).catch(() => {});
         }else {
-          setTimeout(location.reload.bind(location), 90);
+          setTimeout(location.reload.bind(location), 1);
           router.push({ path: "/CourseTable" }).catch(() => {});
         }
       } else {

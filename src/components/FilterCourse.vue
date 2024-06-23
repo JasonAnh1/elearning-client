@@ -5,7 +5,7 @@
                 <div class="filter-section">
 
                     <el-form :inline="true" class="demo-form-inline  ps-5 pt-3 shadow p-3 mb-5 bg-body rounded">
-                        
+
                         <div class="w-50" :inline="true">
                             <span class="demonstration">Start price:</span>
                             <el-slider v-model="payload.startPrice" :max="6000000"
@@ -30,22 +30,27 @@
 
             </div>
             <div class="col-md-9">
-                <div class="course-card d-flex" v-for="item in courses" v-bind:key="item.id" @click="goToDetail(item.id)">
-                    <img :src=item.media.originUrl class="course-img" alt="Course Image">
+                <div class="course-card d-flex" v-for="item in courses" v-bind:key="item.id"
+                    @click="goToDetail(item.id)">
+                    <div class="position-relative">
+                        <img :src="item.media.thumbUrl" class="card-img-top"
+                            :class="{ 'promote-border': item.advertise === 'PROMOTE' }" alt="...">
+                        <span v-if="item.advertise === 'PROMOTE'" class="promote-overlay">PROMOTE</span>
+                    </div>
                     <div class="course-details">
                         <h5 class="fw-bold">{{ item.title }}</h5>
                         <p>{{ item.shortDes }}</p>
-                        <p>{{item.author.name}}</p>
+                        <p>{{ item.author.name }}</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span>{{item.rating}} ⭐</span>
+                            <span>{{ item.rating }} ⭐</span>
                             <div>
-                                <span class="course-price">{{formatPriceTooltip(item.priceSale)}}</span>
+                                <span class="course-price">{{ formatPriceTooltip(item.priceSale) }}</span>
                                 <span class="course-original-price">{{ formatPriceTooltip(item.price) }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
-               
+
 
             </div>
         </div>
@@ -77,7 +82,20 @@ export default {
     },
     computed: {
         courses() {
-            return this.$store.state.lstCourse;
+            return this.$store.state.lstCourse.slice().sort((a, b) => {
+                // Kiểm tra nếu a là 'PROMOTE' và b không phải là 'PROMOTE'
+                if (a.advertise === 'PROMOTE' && b.advertise !== 'PROMOTE') {
+                    return -1;  // Đưa a lên trước b
+                }
+                // Kiểm tra nếu a không phải là 'PROMOTE' và b là 'PROMOTE'
+                else if (a.advertise !== 'PROMOTE' && b.advertise === 'PROMOTE') {
+                    return 1;  // Đưa b lên trước a
+                }
+                // Nếu cả hai đều là 'PROMOTE' hoặc cả hai đều không phải là 'PROMOTE'
+                else {
+                    return 0;  // Giữ nguyên thứ tự hiện tại
+                }
+            });
         },
     },
     async mounted() {
@@ -142,5 +160,25 @@ export default {
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 5px;
+}
+.promote-border {
+  border: 2px solid #ff9900; 
+
+}
+
+.position-relative {
+  position: relative;
+}
+
+.promote-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 153, 0, 0.8); /* Màu nền với độ trong suốt */
+  color: white; /* Màu chữ */
+  padding: 5px 10px; /* Khoảng cách giữa chữ và khung */
+  border-radius: 5px; /* Bo tròn các góc */
+  font-size: 12px; /* Kích thước chữ */
+  font-weight: bold; /* Chữ đậm */
 }
 </style>

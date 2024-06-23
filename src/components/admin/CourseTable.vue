@@ -50,8 +50,9 @@
             </el-table-column>
             <el-table-column label="Price Sale" prop="priceSale" :formatter="formatPrice">
             </el-table-column>
-
-            <el-table-column fixed="right" width="180">
+            <el-table-column label="advertise" prop="advertise">
+            </el-table-column>
+            <el-table-column fixed="right" width="280">
                 <template slot="header">
                     <input v-model="search" placeholder="Type to search course">
                 </template>
@@ -60,6 +61,8 @@
                         plain>Approve</el-button>
                     <el-button size="mini" type="danger" @click="handleCancel(scope.$index, scope.row)"
                         plain>Cancel</el-button>
+                    <el-button size="mini" type="warning" @click="handlePromote(scope.$index, scope.row)"
+                        plain>Promote</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -75,7 +78,7 @@
 </template>
 
 <script>
-
+import axios from "axios";
 export default {
     name: 'CourseTable',
     data() {
@@ -158,6 +161,17 @@ export default {
             this.$store.dispatch('fetchUpdateCourse', { 'img': null, 'request': this.course }).then(() => {
                 this.$store.dispatch('fetchListCourse', this.payload)
             });
+        },
+        async handlePromote(index, row) {
+            await axios.get("api/v1/promote-course", {
+                params: {
+                    courseId: row.id
+                },
+                headers: {
+                    Authorization: localStorage.getItem("accessToken"),
+                },
+            });
+            this.$store.dispatch('fetchListCourse', this.payload)
         },
         handleCurrentChange(val) {
 

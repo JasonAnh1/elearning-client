@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1 class=" w-25 mt-2 ms-2 fw-bold">Profit revenue:</h1>
-   
+
         <div class="row">
             <Bar :data="data" :options="options" class="w-50 h-50" />
             <Bar :data="dataDay" :options="options" class="w-50 h-50" />
@@ -38,36 +38,36 @@
         </div>
         <div class="row mt-5">
             <div class="col-md-6">
-                <table class="table" >
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Reveneu</th>
-                        <th scope="col">Total</th>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Reveneu</th>
+                            <th scope="col">Total</th>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Gross profit</td>
-                        <td>{{ formatCurrency(grossProfit) }}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Gross profit</td>
+                            <td>{{ formatCurrency(grossProfit) }}</td>
 
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Net profit</td>
-                        <td>{{ formatCurrency(netProfit) }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Net profit</td>
+                            <td>{{ formatCurrency(netProfit) }}</td>
 
-                    </tr>
+                        </tr>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
             </div>
-           <div class="col-md-6" style="width: 300px;">
-            <Pie :data="chartData"  :options="chartOptions" v-if="loaded"/>
-           </div>
-         
+            <div class="col-md-6" style="width: 300px;">
+                <Pie :data="chartData" :options="chartOptions" v-if="loaded" />
+            </div>
+
         </div>
 
 
@@ -88,15 +88,16 @@ import {
 import { Pie } from 'vue-chartjs'
 import { Bar } from 'vue-chartjs'
 import axios from "axios";
-ChartJS.register(CategoryScale, LinearScale, BarElement,ArcElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend)
 
 export default {
     name: 'RevenueChart',
     components: {
         Bar,
         Pie
+
     },
-    
+
     data() {
         return {
             chartData: {
@@ -104,7 +105,7 @@ export default {
                 datasets: [
                     {
                         backgroundColor: ['#41B883', '#E46651'],
-                        data: [100,100]
+                        data: [100, 100]
                     }
                 ]
             },
@@ -198,43 +199,43 @@ export default {
             }
         },
         fetchGrossProfit() {
-    // Gọi API để lấy dữ liệu về gross profit
-    return axios.get('url_gross_profit');
-  },
-  fetchNetProfit() {
-    // Gọi API để lấy dữ liệu về net profit
-    return axios.get('url_net_profit');
-  }
+            // Gọi API để lấy dữ liệu về gross profit
+            return axios.get('url_gross_profit');
+        },
+        fetchNetProfit() {
+            // Gọi API để lấy dữ liệu về net profit
+            return axios.get('url_net_profit');
+        }
     },
     async mounted() {
         try {
-                const response = await axios.get("api/v1/revenue/month", {
-                    params: {
-                        year: this.selectedYear,
-                        month: this.selectedMonth, // Sử dụng năm được chọn từ dropdown
-                    },
-                    headers: {
-                        Authorization: localStorage.getItem("accessToken"),
-                    },
-                });
+            const response = await axios.get("api/v1/revenue/month", {
+                params: {
+                    year: this.selectedYear,
+                    month: this.selectedMonth, // Sử dụng năm được chọn từ dropdown
+                },
+                headers: {
+                    Authorization: localStorage.getItem("accessToken"),
+                },
+            });
 
-                const labels = response.data.map(item => `days ${item.days}`);
-                const data = response.data.map(item => item.totalAmount);
+            const labels = response.data.map(item => `days ${item.days}`);
+            const data = response.data.map(item => item.totalAmount);
 
-                // Cập nhật dữ liệu
-                this.dataDay = {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Revenue',
-                        backgroundColor: '#25cdd9',
-                        data: data
-                    }]
-                };
+            // Cập nhật dữ liệu
+            this.dataDay = {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue',
+                    backgroundColor: '#25cdd9',
+                    data: data
+                }]
+            };
 
-                console.log(response.data);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
         try {
             const response = await axios.get("api/v1/publish/test", {
                 params: {
@@ -258,7 +259,7 @@ export default {
             console.error('Error:', error);
         }
         try {
-            
+
             const response = await axios.get("api/v1/revenue/grossProfit", {
                 params: {
                     year: this.selectedYear
@@ -267,19 +268,20 @@ export default {
                     Authorization: localStorage.getItem("accessToken"),
                 },
             })
-            const response2= await axios.get("api/v1/revenue/netProfit", {
+            const response2 = await axios.get("api/v1/revenue/netProfit", {
                 params: {
                     year: this.selectedYear
                 },
                 headers: {
                     Authorization: localStorage.getItem("accessToken"),
-                },})
-          
+                },
+            })
+
             this.grossProfit = response.data
             this.netProfit = response2.data
-            this.chartData.datasets[0].data = [ response.data, response2.data];
+            this.chartData.datasets[0].data = [response.data, response2.data];
             this.loaded = true
-            console.log(   this.chartData)
+            console.log(this.chartData)
         } catch (error) {
             console.error('Error:', error);
         }

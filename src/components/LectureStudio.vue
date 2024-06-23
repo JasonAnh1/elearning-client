@@ -291,31 +291,48 @@
       <div class="row row-cols-1 row-cols-md-4 jus">
         <div class="col mt-4" v-for="item in listCourseForAuthor" v-bind:key="item.id">
           <div class="card h-100 ">
-
             <a class="text-decoration-none text-reset" v-on:click="getDetailCourseStudio(item.id)">
-              <img :src=item.media.thumbUrl class="card-img-top " alt="...">
+              <div class="position-relative">
+                <img :src="item.media.thumbUrl" class="card-img-top"
+                  :class="{ 'promote-border': item.advertise === 'PROMOTE' }" alt="...">
+                <span v-if="item.advertise === 'PROMOTE'" class="promote-overlay">PROMOTE</span>
+              </div>
               <span class=" ms-3" style="font-size: 10px;"><i class="fa-solid fa-user text-muted"></i> {{
                 item.learnerNumber }}
                 <el-rate class="ps-3" :value="item.rating" disabled show-score text-color="#ff9900"
                   score-template="{value}">
                 </el-rate>
-
               </span>
-
               <div class="card-body">
                 <h5 class="card-title fw-bold">{{ item.title }}</h5>
                 <p class="card-text">{{ item.author.name }}
-
                 </p>
-
               </div>
-
             </a>
           </div>
-
         </div>
-
       </div>
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" v-if="payload.page + 1 > 1">
+            <a class="page-link" href="#" @click="prevPage">
+              <span aria-hidden="true">&laquo;</span>
+              <span class="sr-only">Previous page</span>
+            </a>
+          </li>
+          <li class="page-item" v-for="n in pageNumbers" :key="n">
+            <a class="page-link" href="#" :class="{ active: n === payload.page + 1 }" @click="goToPage(n)">
+              {{ n }}
+            </a>
+          </li>
+          <li class="page-item" v-if="payload.page + 1 < totalPages">
+            <a class="page-link" href="#" @click="nextPage">
+              <span aria-hidden="true">&raquo;</span>
+              <span class="sr-only">Next page</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
     <BookLecture></BookLecture>
     <ArticleLecture></ArticleLecture>
@@ -334,7 +351,6 @@ import {
   LinearScale
 } from 'chart.js'
 import { Pie } from 'vue-chartjs'
-// import { Bar } from 'vue-chartjs'
 import axios from "axios";
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend)
 import router from '@/router';
@@ -363,6 +379,8 @@ export default {
       userName: localStorage.getItem('username'),
       isVerify: localStorage.getItem('active'),
       bankCode: 'NCB',
+      // payload to call list course api
+      listCourseForAuthor:[],
       payload: {
         page: 0,
         status: null,
@@ -372,7 +390,11 @@ export default {
         categoryId: 0,
         authorId: 0
       },
-
+      totalRecord: 0,
+      pageSize:8,
+      pageNumbers:null,
+      totalPages:0,
+      //
       chartData: {
         labels: ['Gross profit', 'Net profit'],
         datasets: [
@@ -422,45 +444,91 @@ export default {
     userLogined() {
       return this.$store.state.userLogined;
     },
-    listCourseForAuthor() {
-      return this.$store.state.lstCourse;
-    },
     listBooksForAuthor() {
       return this.$store.state.lstCourse;
     }
   },
   async mounted() {
-    this.payload.authorId = localStorage.getItem("ownerId");
-    this.$store.dispatch('fetchListCourse', this.payload);
-    const response = await axios.get("api/v1/publish/get-books", {
-      params: { page: 0, authorId: localStorage.getItem('ownerId'), categoryId: 0, startPrice: 0, endPrice: 0 },
-    });
-    this.books = response.data;
-    console.log(this.books)
-    try {
+    this.getBooks()
+    this.getCourse()
+    this.getProfit()
+  
+  },
+  methods: {
+    generatePagination() {
+      this.totalPages = Math.ceil(this.totalRecord / this.pageSize);
+      const pageNumbers = [];
+      for (let i = 1; i <= this.totalPages; i++) {
+        pageNumbers.push(i);
+      }
 
-      const response = await axios.get("api/v1/lectures-revenue/netProfit", {
+      this.pageNumbers = pageNumbers;
+    },
+    prevPage() {
+      if (this.payload.page + 1 > 1) {
+        this.payload.page --;
+        this.getCourse();
+      }
+    },
+    nextPage() {
+      if (this.payload.page + 1 < this.totalPages) {
+        this.payload.page ++;
+        this.getCourse();
+      }
+    },
+    goToPage(n) {
+      this.payload.page = n - 1;
+      this.getCourse();
+    },
+   async getCourse(){
+      this.payload.authorId = localStorage.getItem("ownerId");
+      const response = await axios.get("api/v1/publish/list-course", {
         params: {
-          year: this.selectedYear
+          title: this.payload.title,
+          page: this.payload.page,
+          status: this.payload.status,
+          startPrice: this.payload.startPrice,
+          endPrice: this.payload.endPrice,
+          authorId: this.payload.authorId,
+          authorName: this.payload.authorName,
+          categoryId: this.payload.categoryId,
         },
         headers: {
           Authorization: localStorage.getItem("accessToken"),
         },
-      })
+      });
+      this.listCourseForAuthor = response.data.body;
+      this.totalRecord = response.data.totalRecord;
+      this.generatePagination();
+    },
+    async getProfit() {
+      try {
+        const response = await axios.get("api/v1/lectures-revenue/netProfit", {
+          params: {
+            year: this.selectedYear
+          },
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+          },
+        })
 
 
-      this.grossProfit = response.data
-      this.netProfit = this.grossProfit * 0.8
-      this.chartData.datasets[0].data = [this.grossProfit, this.grossProfit * 0.8];
-      this.loaded = true
-      console.log(this.chartData)
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  },
-  methods: {
+        this.grossProfit = response.data
+        this.netProfit = this.grossProfit * 0.8
+        this.chartData.datasets[0].data = [this.grossProfit, this.grossProfit * 0.8];
+        this.loaded = true
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    },
     formatCurrency(amount) {
       return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    },
+    async getBooks(){
+      const response = await axios.get("api/v1/publish/get-books", {
+      params: { page: 0, authorId: localStorage.getItem('ownerId'), categoryId: 0, startPrice: 0, endPrice: 0 },
+    });
+    this.books = response.data;
     },
     checkOutVerify() {
       if (this.bankCode) {
@@ -493,7 +561,6 @@ export default {
         password: this.password
       });
     },
-
     changePic() {
       this.imageFile = URL.createObjectURL(this.$refs.file.files[0])
     },
@@ -622,5 +689,25 @@ export default {
 .modal-verify-content em {
   font-style: italic;
   color: #333;
+}
+.promote-border {
+  border: 2px solid #ff9900; 
+
+}
+
+.position-relative {
+  position: relative;
+}
+
+.promote-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 153, 0, 0.8); /* Màu nền với độ trong suốt */
+  color: white; /* Màu chữ */
+  padding: 5px 10px; /* Khoảng cách giữa chữ và khung */
+  border-radius: 5px; /* Bo tròn các góc */
+  font-size: 12px; /* Kích thước chữ */
+  font-weight: bold; /* Chữ đậm */
 }
 </style>

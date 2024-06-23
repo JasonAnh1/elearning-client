@@ -396,8 +396,10 @@
         </div>
         <div class="col-md-4">
           <div class="card shadow">
-            <div class="hovereffect">
-              <img class="card-img-top img-responsive" :src=currentCourse.media.originUrl alt="">
+            <div class="hovereffect" :class="{ 'promote-border': currentCourse.advertise === 'PROMOTE' }">
+              <img class="card-img-top img-responsive"  :src=currentCourse.media.originUrl alt="">
+               <!-- Thêm lớp phủ chữ "PROMOTE" nếu khóa học được quảng bá -->
+  <span v-if="currentCourse.advertise === 'PROMOTE'" class="promote-overlay">PROMOTE</span>
               <div class="overlay" v-if="currentCourse.isEnrolled === false">
                 <h2 class="rounded bg-primary btn" @click="addCourseToCart(currentCourse)"> <i class="fa-solid fa-play ms-1"> Enroll </i></h2>
                 <p class="icon-links">
@@ -412,7 +414,7 @@
             </div>
             <!-- <img src="https://img-b.udemycdn.com/course/480x270/2420912_0623.jpg" class="card-img-top" alt="..."> -->
             <div class="card-body">
-              <h5 class="card-title fw-bold">Course Content</h5>
+              <h5 class="card-title fw-bold">Course content</h5>
               <ul class="list-unstyled">
                 <div v-html="currentCourse.courseContent"></div>
               </ul>
@@ -768,5 +770,24 @@ export default {
 .hovereffect:hover p.icon-links a:first-child {
   -webkit-transition-delay: 0.2s;
   transition-delay: 0.2s;
+}
+/* Lớp CSS cho viền promote */
+.promote-border {
+  border: 2px solid #ff9900; /* Bạn có thể thay đổi màu sắc và độ rộng của viền theo ý muốn */
+  border-radius: 10px; /* Nếu bạn muốn các góc của viền được bo tròn */
+}
+
+/* Lớp CSS cho lớp phủ chữ "PROMOTE" */
+.promote-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 153, 0, 0.8); /* Màu nền với độ trong suốt */
+  color: white; /* Màu chữ */
+  padding: 5px 10px; /* Khoảng cách giữa chữ và khung */
+  border-radius: 5px; /* Bo tròn các góc */
+  font-size: 12px; /* Kích thước chữ */
+  font-weight: bold; /* Chữ đậm */
+  z-index: 10; /* Đảm bảo lớp phủ nằm trên các phần tử khác */
 }
 </style>

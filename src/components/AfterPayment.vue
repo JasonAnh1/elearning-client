@@ -60,6 +60,9 @@ export default {
             }else if(transactionObj.type === 'plan'){
                 this.$store.dispatch('submitPlanPaymentSuccess', transactionObj);
             } 
+            else if(transactionObj.type === 'promote'){
+                this.$store.dispatch('submitPromotePaymentSuccess', transactionObj);
+            } 
              else {
                 this.$store.dispatch('submitPaymentSuccess', transactionObj);
             }
