@@ -4,7 +4,7 @@
       <div class="card mb-3">
         <div class="row g-0">
           <div class="col-md-4">
-            <img :src=item.avatar.originUrl class="img-fluid rounded-start" alt="...">
+            <img :src=item.avatar.originUrl class="img-fluid rounded-start" alt="..." style="height: 250px;">
           </div>
           <div class="col-md-8">
             <div class="card-body">

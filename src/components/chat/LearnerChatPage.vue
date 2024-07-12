@@ -3,7 +3,7 @@
         <div v-if="userData.connected" class="chat-box">
             <div class="member-list ">
                 <ul>
-                    <li class="btn btn-primary mt-2 disabled w-100">{{ tab }}</li>
+                    <li class="btn btn-primary mt-2 disabled w-100">{{ tab }} <span class="text-danger fw-bold">{{ countUnseen }}</span></li>
 
                 </ul>
             </div>
@@ -13,14 +13,14 @@
                     <li v-for="(chat, index) in privateChats.get(tab)" :key="index"
                         :class="{ message: true, self: chat.senderName === userData.username }">
                         <div v-if="chat.senderName !== userData.username" class="avatar">{{ chat.senderName }}</div>
-                        <div class="message-data">{{ chat.message }}</div>
+                        <div class="message-data">{{ chat.message }}<br/><span v-if="chat.senderName !== userData.username" class="text-muted" style="font-size: 10px;"> {{ chat.readStatus }}</span></div>
                         <div v-if="chat.senderName === userData.username" class="avatar self">{{ chat.senderName }}
                         </div>
                     </li>
                 </ul>
                 <div class="send-message">
                     <input type="text" class="input-message" placeholder="enter the message"
-                        v-model="userData.message" />
+                        v-model="userData.message"  @focus="markMessagesAsRead"/>
                     <button type="button" class="send-button" @click="sendPrivateValue"><i class="fa-regular fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -39,6 +39,7 @@ import axios from "axios";
 export default {
     data() {
         return {
+            countUnseen:0,
             stompClient: null,
             privateChats: new Map(),
             publicChats: [],
@@ -62,6 +63,24 @@ export default {
         this.disconnect(); // Ngắt kết nối trước khi component bị hủy
     },
     methods: {
+        async markMessagesAsRead() {
+            this.countUnseen = 0;
+
+            await axios.post("api/v1/mark-messages-as-read", {
+                receiverName: this.currentUser,
+                senderName: this.tab
+            }, {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken"),
+                },
+            });
+
+            this.privateChats.get(this.tab).forEach(chat => {
+                if (chat.readStatus === 'UNSEEN') {
+                    chat.readStatus = 'SEEN';
+                }
+            });
+        },
         addNullValue() {
             const currentValue = this.userData.message;
             // Thêm ký tự ' ' vào userData.message
@@ -96,7 +115,9 @@ export default {
             // đẩy vào map để hiển thị ra màn hình
             for (let ms of response.data) {
                 console.log(ms)
-
+                if(ms.readStatus === 'UNSEEN' && ms.senderName !== this.userData.username){
+                    this.countUnseen ++;
+                }
                 if (this.privateChats.get(ms.senderName)) {
                     this.privateChats.get(ms.senderName).push(ms);
                 } else {

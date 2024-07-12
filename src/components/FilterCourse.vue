@@ -15,6 +15,7 @@
                             <span class="demonstration">End price:</span>
                             <el-slider v-model="payload.endPrice" :max="6000000"
                                 :format-tooltip="formatPriceTooltip"></el-slider>
+                            
                         </div>
                         <el-form-item label="Author name">
                             <el-input placeholder="Author name" v-model="payload.authorName"></el-input>
@@ -46,6 +47,7 @@
                             <div>
                                 <span class="course-price">{{ formatPriceTooltip(item.priceSale) }}</span>
                                 <span class="course-original-price">{{ formatPriceTooltip(item.price) }}</span>
+                       
                             </div>
                         </div>
                     </div>
@@ -66,7 +68,7 @@ export default {
       
             payload: {
                 page: 0,
-                status: null,
+                status: 'APPROVE',
                 authorName: null,
                 startPrice: 0,
                 endPrice: 0,

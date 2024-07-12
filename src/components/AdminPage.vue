@@ -54,7 +54,10 @@
                             <i class="fa-solid fa-chalkboard-user"></i>
                             <span slot="title">Lectures</span>
                         </el-menu-item>
-                       
+                        <el-menu-item index="5" @click="logout()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span slot="title">Log out</span>
+                        </el-menu-item>
                     </el-menu>
                 </el-col>
                 <el-col :span="20">

@@ -78,13 +78,13 @@
       <!-- Sidebar -->
       <div class="col-lg-4">
         <h4>You may want</h4>
-        <ul class="list-group">
+        <!-- <ul class="list-group">
           <li class="list-group-item"><a href="#">Bài viết 1</a></li>
           <li class="list-group-item"><a href="#">Bài viết 2</a></li>
           <li class="list-group-item"><a href="#">Bài viết 3</a></li>
           <li class="list-group-item"><a href="#">Bài viết 4</a></li>
           <li class="list-group-item"><a href="#">Bài viết 5</a></li>
-        </ul>
+        </ul> -->
       </div>
     </div>
   </div>

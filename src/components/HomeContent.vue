@@ -11,7 +11,7 @@
                 Empowering global education without boundaries, providing unlimited teaching opportunities regardless of
                 geographical location or subject matter expertise
               </h5>
-              <a class="btn btn-primary btn-lg m-2 text-white" href="https://www.youtube.com/watch?v=c9B4TPnak1A"
+              <a class="btn btn-primary btn-lg m-2 text-white"  @click="goLearnerPage()"
                 role="button" rel="nofollow" target="_blank">Learner</a>
               <a class="btn btn-outline-primary btn-lg m-2" target="_blank" role="button"
                 v-on:click="goLecturePage()">Lecturers</a>
@@ -208,7 +208,7 @@ export default {
       perPage: 4,
       payload: {
         page: 0,
-        status: null,
+        status: 'APPROVE',
         authorName: null,
         startPrice: 0,
         endPrice: 0,
@@ -253,6 +253,19 @@ export default {
       user.password = this.orgPassword;
       user.phone = this.orgPhone;
       this.$store.dispatch('orgSignUp',user)
+    },
+    goLearnerPage() {
+      if (localStorage.getItem("role") === 'ROLE_LEARNER') {
+        this.$router.push({ path: "/LearnerPage" })
+      } else {
+        this.$swal.fire({
+          icon: 'error',
+          title: 'Oh no',
+          text: 'You are not learner!',
+          footer: '<a href="">Go back?</a>'
+        });
+      }
+   
     },
     formatCurrency(amount) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);

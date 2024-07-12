@@ -1,35 +1,43 @@
 <template>
   <div class="container-fluid">
     <div v-if="userData.connected" class="chat-box ">
-      <div class="member-list">
-        <ul>
-          <div v-for="(name, index) in privateChats.keys()" :key="index">
-            <li class="btn btn-primary mt-2 w-100" v-if="name !== currentUser" @click="setTab(name)"
-              :class="{ active: tab === name }">{{ name }}</li>
+      <div class="dropdown">
+  <a class="btn btn-primary dropdown-toggle" style="width: 300px;" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+   Learners
+  </a>
 
-          </div>
+  <ul class="dropdown-menu" style="width: 300px;" aria-labelledby="dropdownMenuLink">
+    <li v-for="(name, index) in privateChats.keys()" :key="index">
+      <a class="dropdown-item" @click="setTab(name)">
+        <img src="http://localhost:8080/api/images/2024_06_24_17_07_49_588_IXI0B_download%20(2).png" alt="avatar" class="rounded-circle me-2" style="width: 30px; height: 30px;">
+        {{ name }} <span v-if="countNotification.get(name) > 0" class="text-danger fw-bold">
+                {{ countNotification.get(name) }}
+              </span></a>
+    
+    </li>
 
-
-        </ul>
-      </div>
+  </ul>
+</div>
+     
 
       <div class="chat-content">
         <ul class="chat-messages">
           <li v-for="(chat, index) in privateChats.get(tab)" :key="index"
             :class="{ message: true, self: chat.senderName === userData.username }">
             <div v-if="chat.senderName !== userData.username" class="avatar">{{ chat.senderName }}</div>
-            <div class="message-data">{{ chat.message }}</div>
+            <div class="message-data">{{ chat.message }}<br/><span v-if="chat.senderName !== userData.username" class="text-muted" style="font-size: 10px;"> {{ chat.readStatus }}</span></div>
             <div v-if="chat.senderName === userData.username" class="avatar self">{{ chat.senderName }}</div>
           </li>
         </ul>
         <div class="send-message">
-          <input type="text" class="input-message" placeholder="enter the message" v-model="userData.message" />
-          <button type="button" class="send-button" @click="sendPrivateValue"><i class="fa-regular fa-paper-plane"></i></button>
+          <input type="text" class="input-message" placeholder="enter the message" v-model="userData.message"  @focus="markMessagesAsRead"/>
+          <button type="button" class="send-button" @click="sendPrivateValue"><i
+              class="fa-regular fa-paper-plane"></i></button>
         </div>
       </div>
     </div>
     <div v-else class="register">
-      <input id="user-name" placeholder="Enter your name" v-model="userData.username" />
+      <input id="user-name" placeholder="Enter your name" v-model="userData.username"/>
       <button type="button" @click="registerUser">connect</button>
     </div>
   </div>
@@ -42,6 +50,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+
       stompClient: null,
       privateChats: new Map(),
       countNotification: new Map(),
@@ -72,11 +81,53 @@ export default {
       this.addNullValue();
     }, 1000); // 5000 milliseconds = 5 seconds
     this.connect();
+    this.loadUnseenMessagesCount();
   },
   beforeDestroy() {
     this.disconnect(); // Ngắt kết nối trước khi component bị hủy
   },
   methods: {
+    async markMessagesAsRead() {
+      try {
+        await axios.post("api/v1/mark-messages-as-read", {
+          receiverName: this.currentUser,
+          senderName: this.tab
+        }, {
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+          },
+        });
+
+        // Cập nhật trạng thái tin nhắn trong giao diện người dùng
+        const chats = this.privateChats.get(this.tab);
+        chats.forEach(chat => {
+          if (chat.senderName === this.tab && chat.readStatus === 'UNSEEN') {
+            chat.readStatus = 'SEEN';
+          }
+        });
+
+        // Cập nhật số tin nhắn chưa đọc
+        this.countNotification.set(this.tab, 0);
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+      }
+    },
+    async loadUnseenMessagesCount() {
+      try {
+        const response = await axios.get("api/v1/unseen-messages-count", {
+          params: { receiverName: this.currentUser },
+          headers: {
+            Authorization: localStorage.getItem("accessToken"),
+          },
+        });
+
+        response.data.forEach(count => {
+          this.countNotification.set(count.senderName, count.count);
+        });
+      } catch (error) {
+        console.error("Error loading unseen messages count:", error);
+      }
+    },
     addNullValue() {
       const currentValue = this.userData.message;
       // Thêm ký tự ' ' vào userData.message
@@ -136,14 +187,14 @@ export default {
         position: 'bottom-left'
       });
 
-      if(payloadData.status === "MESSAGE"){
+      if (payloadData.status === "MESSAGE") {
         let currentCount = this.countNotification.get(payloadData.senderName);
-         this.countNotification.set(payloadData.senderName,currentCount + 1); 
-      }else if(payloadData.status === "JOIN"){
+        this.countNotification.set(payloadData.senderName, currentCount + 1);
+      } else if (payloadData.status === "JOIN") {
         this.countNotification.set(payloadData.senderName, 0)
       }
-    
-     
+
+
       if (this.privateChats.get(payloadData.senderName)) {
         this.privateChats.get(payloadData.senderName).push(payloadData);
       } else {
@@ -192,16 +243,21 @@ export default {
       this.connect();
     },
     async setTab(tab) {
-      
+
       this.tab = tab;
       this.privateChats.set(this.tab, [])
-      this.countNotification.set(this.tab,0)
+      this.countNotification.set(this.tab, 0)
       const response = await axios.get("api/v1/get-conversation", {
         params: { receiverName: this.currentUser, senderName: this.tab },
         headers: {
           Authorization: localStorage.getItem("accessToken"),
         },
       });
+      response.data.forEach(ms => {
+          if (ms.readStatus === 'UNSEEN') {
+            this.countNotification.set(ms.senderName, (this.countNotification.get(ms.senderName) || 0) + 1);
+          }
+        });
       // đẩy vào map để hiển thị ra màn hình
       for (let ms of response.data) {
         console.log(ms)

@@ -4,8 +4,11 @@
             <h1 class="t ms-5 pt-5 fw-bold ps-5 text-primary">ElearnCenter Studio</h1>
             <h1 class="btn btn-outline-primary  mt-3" style="margin-left:90px ;" data-bs-toggle="modal"
                 data-bs-target="#createCourseModal" v-on:click="updateModel()">Edit course</h1>
+            <h1 class="btn btn-outline-danger  mt-3" style="margin-left:13px ;" data-bs-target="#createCourseModal"
+                v-on:click="cancelCourse()" v-if="currentCourse.status === 'APPROVE'">Cancel course</h1>
             <h1 class="btn btn-outline-warning  mt-3" style="margin-left:13px ;" data-bs-toggle="modal"
-                data-bs-target="#promoteCourseModal" v-if="currentCourse.advertise === 'NONE'">
+                data-bs-target="#promoteCourseModal"
+                v-if="currentCourse.advertise === 'NONE' && currentCourse.status === 'APPROVE'">
                 Promote course</h1>
             <div class="modal fade" id="promoteCourseModal" tabindex="-1" aria-labelledby="promoteCourseModal"
                 aria-hidden="true">
@@ -148,7 +151,8 @@
             </div>
         </div>
         <div class="container mt-5 ">
-            <h3 class="fw-bold">{{ currentCourse.title }}:</h3>
+            <h3 class="fw-bold">{{ currentCourse.title }}: <span class="text-primary">{{ currentCourse.status }}</span>
+            </h3>
             <div class="row row-cols-1 row-cols-md-4 jus">
                 <div class="col">
                     <div class="card  ">
@@ -613,6 +617,7 @@ export default {
     },
 
     methods: {
+
         goToLesson(lessonId) {
             router.push({ path: "/LessonStudio", query: { lessonId: lessonId, courseId: this.courseId } });
         },
@@ -745,6 +750,34 @@ export default {
                 });
             }
         },
+        cancelCourse() {
+            this.$confirm('Are you sure you want to cancel this course?', 'Warning', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                type: 'warning'
+            }).then(() => {
+                let course = {
+                    id: this.currentCourse.id,
+                    status: "CANCEL"
+                };
+                this.$store.dispatch('fetchUpdateCourse', { 'img': null, 'request': course });
+                this.currentCourse.status = "CANCEL";
+
+                // Optionally show a success notification
+                this.$notify({
+                    title: 'Success',
+                    message: 'Course has been canceled',
+                    type: 'success'
+                });
+            }).catch(() => {
+                // Optionally handle the case when user cancels the action
+                this.$notify({
+                    title: 'Cancelled',
+                    message: 'Course cancellation has been aborted',
+                    type: 'info'
+                });
+            });
+        }
     },
     props: {
         msg: String
